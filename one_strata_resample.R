@@ -9,11 +9,22 @@ library(sf)
 
 
 
-#goal: median abundance of fish across three tows in one strata
-#input: csv, strata of interest, 
-#output: median + confidence interval
+#overall goal: resampled catch weight and number info fro both superstrata
+#input: winter flounder csv, strata of interest, number of tows to resample
+#output: one resample of both superstrata
 
-one_strata_resample <- function(data, strata_number){
+
+
+# need to resample more than one strata at a time
+  # min. one tow per original strata sampled
+# create new strata areas
+  # 3640, 3650, 3660 --> 646566
+  # 3590, 3600, 3610 --> 596061
+# make sure 2023 doesn't kill everything
+# start with resampling 6 tows per superstrata, if it doesn't have 6 start with next highest value (max number of tows across all three strata)
+  # min. one tow per original strata sampled
+
+one_strata_resample <- function(data, strata_number, number_tows){
   
   #load in data
   survey_data <- read.csv(data) %>% 
@@ -34,7 +45,7 @@ one_strata_resample <- function(data, strata_number){
 
     resampled_rows <- single_strata %>%
       filter(group == "YEAR" & sub_group == "SEASON") %>%
-      sample_n(size = 2, replace = FALSE)
+      sample_n(size = number_tows, replace = FALSE)
     
   return(resampled_rows)
  
@@ -44,8 +55,9 @@ one_strata_resample <- function(data, strata_number){
 
 # data: file path to csv with YEAR, SEASON, STRATUM, PURPOSE_CODE, TOW, STATION, CATCH_WT_CAL
 # strata_number: the strata ID number to resample
+# number_tows: the number of tows you want to resample for a given strata
 
-one_strata_resample(data=here::here("DATA/winter_flounder_survey.csv"), strata_number = 3640)
+one_strata_resample(data=here::here("DATA/winter_flounder_survey.csv"), strata_number = 3640, number_tows = 2)
 
 
 
