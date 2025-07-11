@@ -81,6 +81,13 @@ strata_resample <- function(data, strata_group, number_tows){
              STRATUM = new_stratum_area$STRATUM, # Populate new stratum name
              STRATUM_AREA = new_stratum_area$STRATUM_AREA) # Re-assign STRATUM name and STRATUM_AREA to match new custom group
       
+    ### !!! EML adding a call to not resample if the number of available tows is equal to or less than number_tows
+    ### !!! EML paused for now, but if pick up again - split off the cases where real tows < number_tows and don't do any resampling, then regroup
+    group_total_tows <- group_data %>%
+      group_by(PURPOSE_CODE, YEAR, SEASON, STRATUM) %>%
+      summarise(TOTAL_TOW = n())
+    
+    
     
     # First select 1 resample from each oldSTRATUM in the group
     group_resample <- group_data %>% 
@@ -126,6 +133,16 @@ strata_resample <- function(data, strata_group, number_tows){
  
   
 } #END OF FUNCTION
+
+
+# resampled <- strata_resample(data = here::here("DATA/winter_flounder_survey.csv"),
+#                    strata_group = list("646566" = c(3640, 3650, 3660),
+#                                          "596061" = c(3590, 3600, 3610)),
+#                     number_tows = 3)
+# 
+# resampled <- strata_resample(data = here::here("DATA/winter_flounder_survey.csv"),
+#                              strata_group = list("596061646566" = c(3590, 3600, 3610,3640, 3650, 3660)),
+#                              number_tows = 3)
 
 
 # random_tows_WT_CAL <- NULL #setting up storage
