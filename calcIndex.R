@@ -76,13 +76,6 @@
 library(tidyverse)
 library(ROracle)
 
-winterFlounder <- calcIndex(species_itis = 172905,
-                            stock_abbrev = "GOMWF",
-                            IndexType = "Custom",
-                            doLogin = FALSE,
-                            surveyTowData = resampled,
-                            calibration = "B_CAL")
-
 calcIndex <- function(species_itis = NULL,
                       stock_abbrev = NULL,
                       IndexType = "Default",
@@ -157,10 +150,13 @@ calcIndex <- function(species_itis = NULL,
            CATCH_NO_CAL = case_when(is.na(CATCH_NO_CAL) == TRUE ~ 0,
                                     .default = CATCH_NO_CAL)) 
   
+  
   # End IndexType == Default if statement
   ##### Custom index tow data #####
   } else if(IndexType == "Custom"){
     all_tows <- surveyTowData 
+    ### !!! EML added a calculation of strata_area, essentially a dummy object because all information already contained in all_tows, but needed to make the strata_area left join work below
+    strata_area <- surveyTowData %>% select(STRGRP_DESC,STRATUM,STRATUM_NAME,STRATUM_AREA,MIDLAT,MIDLONG,MINLAT,MAXLAT,MINLON,MAXLON,BLOCKS,NOTOWS,DOE,DOC,UOE,UOC)
   } 
   
   ##### Index calculations #####
@@ -173,8 +169,7 @@ calcIndex <- function(species_itis = NULL,
              SEASON,
              CRUISE6,
              STRATUM,
-             SEX_TYPE,
-             STRATUM_AREA) %>%
+             SEX_TYPE) %>%
     add_tally(name = "STATIONS") %>% # Count number of stations per strata
     dplyr::reframe(STATIONS = STATIONS,
                    CATCH_WT = mean(CATCH_WT_CAL), # Average catch weight
@@ -190,6 +185,10 @@ calcIndex <- function(species_itis = NULL,
                                    .default = CATCH_WT_CV),
            CATCH_NO_CV = case_when(is.nan(CATCH_NO_CV) ~ NA, # If CV can't be calculated (e.g. no stations in a stratum) set to NA
                                    .default = CATCH_NO_CV))
+  
+  # !!! EML moved this to outside of the IndexType == Default branch 
+  # Add STRATUM_AREA required to Mimic processing used to generate STOCKEFF.V_SV_STRAT_IND_O view
+  strata_means <-  left_join(strata_means, strata_areas, by = "STRATUM") 
   
   if(IndexType == "Default"){
     ###### Check strata means ######
@@ -238,8 +237,6 @@ calcIndex <- function(species_itis = NULL,
                        spread_NO = range(CATCH_NO)[2]-range(CATCH_NO)[1])
     }
     
-    # Add STRATUM_AREA required to Mimic processing used to generate STOCKEFF.V_SV_STRAT_IND_O view
-    strata_means <-  left_join(strata_means, strata_areas, by = "STRATUM") 
     
   } # End strata mean check for IndexType == "Default
   
@@ -353,4 +350,19 @@ calcIndex <- function(species_itis = NULL,
   return(returnList)
 }
 
+
+# winterFlounder <- calcIndex(species_itis = 172905,
+#                             stock_abbrev = "GOMWF",
+#                             IndexType = "Default",
+#                             doLogin = TRUE,
+#                             surveyTowData = NULL,
+#                             calibration = "B_CAL")
+# 
+# # "resampled" is the object that comes out of strata_resample
+# winterFlounder <- calcIndex(species_itis = 172905,
+#                             stock_abbrev = "GOMWF",
+#                             IndexType = "Default",
+#                             doLogin = FALSE,
+#                             surveyTowData = resampled,
+#                            calibration = "B_CAL")
 
