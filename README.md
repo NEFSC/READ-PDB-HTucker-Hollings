@@ -3,7 +3,6 @@ Project Title : Determining the effects of altered survey design on relative abu
 calc_survey_area.R : file where I originally made the sampling effort map. 
 heat_map_function.R : file that contains the sampling effort map, but in function form.
 one_strata_resample.R : function for resampling weight and catch number within one strata.
-calcIndex.R : index function for mean abundance and number.
 
 :fish:
 
