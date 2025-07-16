@@ -2,8 +2,9 @@ library(tidyverse)
 library(DataExplorer)
 #install.packages("devtools")
 #install.packages('ROracle')
-
-
+library(ROracle)
+# devtools::install_github("NEFSC/READ-PDB-COLLABORATIONS", dependencies = TRUE)
+library(pdbCollaborations)
 
 
 
@@ -22,8 +23,8 @@ source("~/GitHub/READ-PDB-HTucker-Hollings/one_strata_resample.r")
 
 # calcIndex.R (from the READ-PDB-COLLABORATIONS repo)
 # hint - use the 
-# devtools::install_github("NEFSC/READ-PDB-COLLABORATIONS", dependencies = TRUE)
-# library(pdbCollaborations)
+
+
 
 
 
@@ -60,9 +61,13 @@ for (zzz in 1:iterations) {
             surveyTowData = resampled_rows)
   
   # Add two columns to resample_index$indices
+full_resample_indices <- resample_index$indices %>% 
+  add_column(number_tows = 3, iteration_number = zzz)
   # One column is all the number of tows
   # One column is all the iteration number
   # Use rbind to connect it to final_resample_results
+final_resample_results <- rbind(final_resample_results, full_resample_indices)
+
   # hint - use whatever variable you're using to loop to help
   
   
