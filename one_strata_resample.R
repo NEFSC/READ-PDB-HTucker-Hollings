@@ -74,7 +74,7 @@ strata_resample <- function(data, strata_group, number_tows){
       dplyr::reframe(STRATUM = as.numeric(names(strata_group[igroup])), # Assign new stratum area to new STRATUM definition
                      STRATUM_AREA = sum(STRATUM_AREA)) # Sum area across strata in the group
     
-    # Subset and relable tows for strata group to resample
+    # Subset and relabel tows for strata group to resample
     group_data <- survey_data %>% 
       filter(STRATUM %in% strata_group[igroup][[1]]) %>% # Pick strata group data
       mutate(oldSTRATUM = STRATUM, # Archive original stratum because need to ensure 1 sample from each
