@@ -22,17 +22,13 @@ source("~/GitHub/READ-PDB-HTucker-Hollings/one_strata_resample.r")
 
 
 # calcIndex.R (from the READ-PDB-COLLABORATIONS repo)
-# hint - use the 
 
 
-
-
-
-
-# Specify how many iterations, put that in an object
-# hint - specify a variable for the number
-iterations = 5
-
+# Set up simulation specifications
+iterations = 5 # Specify how many iterations, put that in an object
+ntows = 3
+use_strata_group = list("646566" = c(3640, 3650, 3660),
+                        "596061" = c(3590, 3600, 3610))
 
 
 # Make holder objects to store the many outputs
@@ -40,6 +36,7 @@ iterations = 5
 # OR the very first time you do the loop (if zzz = 1, you don't append, you just save the data frame itself)
 
 final_resample_results <- data.frame()
+final_strata_mean <- data.frame()
 
 # zzz <- 2
 # 
@@ -51,27 +48,52 @@ final_resample_results <- data.frame()
 
 # Start for loop
 for (zzz in 1:iterations) {
+  # Make unique iteration ID, not guaranteed but unlikely to duplicate ID
+  iterationID <- sample(1:1000000, size = 1, replace = FALSE)
+  
   # Do Resampling using one_strata_resample.R
   resampled_rows <- strata_resample(data = here::here("DATA/winter_flounder_survey.csv"),
-                  strata_group = list("646566" = c(3640, 3650, 3660),
-                                      "596061" = c(3590, 3600, 3610)),
-                  number_tows = 3) #return is resampled_rows
+                  strata_group = use_strata_group,
+                  number_tows = ntows) #return is resampled_rows
+  
   # Calculate index using calcIndex.R
   resample_index <- calcIndex(IndexType = "Custom",
-            surveyTowData = resampled_rows)
+            surveyTowData = resampled_rows,
+            summary_strata = names(use_strata_group))
   
   # Add two columns to resample_index$indices
 full_resample_indices <- resample_index$indices %>% 
-  add_column(number_tows = 3, iteration_number = zzz)
-  # One column is all the number of tows
-  # One column is all the iteration number
-  # Use rbind to connect it to final_resample_results
+  add_column(number_tows = ntows, # One column is all the number of tows
+             superstrata = paste(names(use_strata_group), collapse = "_"), # Label what superstrata definition used
+             iteration_number = zzz, # One column is all the iteration number
+             simID = iterationID) # Unique ID for each simulation (not guaranteed but likely not duplicated)
+  
+# Use rbind to connect it to final_resample_results
 final_resample_results <- rbind(final_resample_results, full_resample_indices)
+
+# Save strata output and label
+full_strata_mean <- resample_index$strata_means_summary %>%
+  add_column(number_tows = ntows, # One column is all the number of tows
+             superstrata = paste(names(use_strata_group), collapse = "_"), # Label what superstrata definition used
+             iteration_number = zzz, # One column is all the iteration number
+             simID = iterationID)
+
+# Use rbind to append strata means to final_strata_mean storage
+final_strata_mean <- rbind(final_strata_mean, full_strata_mean)
+
 
   # hint - use whatever variable you're using to loop to help
   
   
 } #END OF FOR LOOP
+
+
+# Checks
+final_strata_mean %>% select(number_tows, superstrata, simID) %>% n_distinct() # Check the number of unique simIDs generated
+final_strata_mean %>% select(number_tows, superstrata, simID) %>% distinct() %>% group_by(simID) %>% add_count() %>% filter(n > 1) # Check if simID accidentally duplicated (since randomly generated this is possible but not likely), if n > 1 then simulations with same ID should be rerun and relabeled
+
+final_resample_results %>% ungroup() %>% select(number_tows, superstrata, simID) %>% n_distinct() # Check the number of unique simIDs generated
+final_resample_results %>% select(number_tows, superstrata, simID, PURPOSE_CODE) %>% distinct() %>% group_by(simID, PURPOSE_CODE) %>% add_count() %>% filter(n > 1) # Check if simID accidentally duplicated (since randomly generated this is possible but not likely), if n > 1 then simulations with same ID should be rerun and relabeled
 
 
 # Take all the results in holder object and summarize output in another object
