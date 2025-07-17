@@ -98,21 +98,76 @@ final_resample_results %>% select(number_tows, superstrata, simID, PURPOSE_CODE)
 
 # Take all the results in holder object and summarize output in another object
 organized_final_results <- final_resample_results %>%
-  select(YEAR, SEASON, STRATUM, STATION, STRAT_MEAN_WT, STRAT_MEAN_NO) #whatever columns we want to keep) 
+  select(-COMMON_NAME, -STOCK_ABBREV, -CRUISE6) %>%
+  filter(PURPOSE_CODE == 10) %>%
+  group_by(YEAR, SEASON) %>%
+  summarise(mean(STRAT_MEAN_WT), 
+            mean(STRAT_MEAN_WT_VAR), 
+            mean(STRAT_MEAN_WT_STDERROR), 
+            mean(STRAT_MEAN_WT_CV), 
+            mean(STRAT_MEAN_NO), 
+            mean(STRAT_MEAN_NO_VAR), 
+            mean(STRAT_MEAN_NO_STDERROR), 
+            mean(STRAT_MEAN_NO_CV), 
+            sd(STRAT_MEAN_WT), 
+            sd(STRAT_MEAN_WT_VAR), 
+            sd(STRAT_MEAN_WT_STDERROR), 
+            sd(STRAT_MEAN_WT_CV), 
+            sd(STRAT_MEAN_NO), 
+            sd(STRAT_MEAN_NO_VAR), 
+            sd(STRAT_MEAN_NO_STDERROR), 
+            sd(STRAT_MEAN_NO_CV))
   
-mean_indices <- sapply(organized_final_results, mean, na.rm = TRUE)
-median_indices <- sapply(organized_final_results, median, na.rm = TRUE)
-cv_indices <- sapply(organized_final_results, IQR, na.rm = TRUE)
 
-plotting_final_df <- rbind(
-  Mean = mean_indices,
-  Median = median_indices,
-  IQR = cv_indices
-)
 
-print(plotting_final_df)
+organized_final_strata_mean <- final_strata_mean %>%
+  select(-COMMON_NAME, -STOCK_ABBREV, -CRUISE6) %>%
+  filter(PURPOSE_CODE == 10) %>%
+  group_by(YEAR, SEASON, STRATUM) %>%
+  summarise(mean(CATCH_WT), 
+            mean(CATCH_WT_VAR), 
+            mean(CATCH_WT_STDERROR),
+            mean(CATCH_WT_CV), 
+            mean(CATCH_NO),
+            mean(CATCH_NO_VAR),
+            mean(CATCH_NO_STDERROR),
+            mean(CATCH_NO_CV),
+            sd(CATCH_WT), 
+            sd(CATCH_WT_VAR), 
+            sd(CATCH_WT_STDERROR),
+            sd(CATCH_WT_CV), 
+            sd(CATCH_NO),
+            sd(CATCH_NO_VAR),
+            sd(CATCH_NO_STDERROR),
+            sd(CATCH_NO_CV))
 
-real_life_indices <- read.csv() #add real life values for comparison
+
+#there has to be a better way to do ^^that ...
+
+
+
+
+
+
+
+
+
+
+
+
+# mean_indices <- sapply(organized_final_results, mean, na.rm = TRUE)
+# median_indices <- sapply(organized_final_results, median, na.rm = TRUE)
+# cv_indices <- sapply(organized_final_results, IQR, na.rm = TRUE)
+# 
+# plotting_final_df <- rbind(
+#   Mean = mean_indices,
+#   Median = median_indices,
+#   IQR = cv_indices
+# )
+# 
+# print(plotting_final_df)
+# 
+# real_life_indices <- read.csv() #add real life values for comparison
 
 
 
