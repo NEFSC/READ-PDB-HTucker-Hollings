@@ -18,7 +18,7 @@
 #' # GOM Winter flounder example 
 #' results_GOMwinter = heat_map_function(data=here::here("DATA/winter_flounder_survey.csv"), shape_file_folder= here::here("DATA"), threshold=0.019, long_lim = c(-71, -69.5), lat_lim = c(41.5, 43)) # uses default start_year
 #' # NEFSC survey map example
-#' results_nefsc = heat_map_function(data=here::here("all_NEFSC_tows.csv"), shape_file_folder= here::here("DATA"), threshold=0.019, long_lim = c(-78.5, -65), lat_lim = c(32, 45)) # uses default start_year
+#' results_nefsc = heat_map_function(data=here::here("DATA/all_NEFSC_tows.csv"), shape_file_folder= here::here("DATA"), threshold=0.019, long_lim = c(-78.5, -65), lat_lim = c(32, 45)) # uses default start_year
 #'
 #' NOTE: Mapped survey effort is based on the maximum number of tows in each strata since start_year 
 
@@ -77,10 +77,12 @@ heat_map_function <- function(data, shape_file_folder, threshold,
   # Survey data - ID positive/zero tows and turn into sf object
   heat_map_actual <- dplyr::right_join(tow_per_strata, stratasf2, by = "STRATUM") %>% 
     group_by(STRATUM, SEASON, PURPOSE_CODE) %>%
-    mutate(max_percent=max(percent)) %>%
+    mutate(max_percent=max(percent),
+           median_percent = median(percent),
+           mode_percent = max(DescTools::Mode(percent))) %>% # Assume largest mode represents target sampling
     mutate(status = case_when(
-      max_percent < threshold ~ "below",
-      max_percent >= threshold ~ "above")) %>% 
+      mode_percent < threshold ~ "below",
+      mode_percent >= threshold ~ "above")) %>% 
     st_as_sf()
   
   #map
