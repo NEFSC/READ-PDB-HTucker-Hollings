@@ -29,6 +29,7 @@ library(DataExplorer)
 library(sf)
 
 
+
 #things that we want: strata shape files + area, year+season, tow counts
 #products: percent area sampled, heat map
 
@@ -85,13 +86,14 @@ heat_map_function <- function(data, shape_file_folder, threshold,
   #map
   effort_map <- ggplot() +
     geom_sf(data= strata, fill="white", colour = "darkgrey") +
-    geom_sf(data = filter(heat_map_actual, is.na(percent)==FALSE), aes(fill = status, geometry = geometry), colour = "gray28") + # Only plot colored strata for strata with samples after start_year (will have a tow_per_strata and percent >= 0)
+    geom_sf(data = filter(heat_map_actual, is.na(percent)==FALSE), aes(fill = status, geometry = geometry), colour = "gray30") + # Only plot colored strata for strata with samples after start_year (will have a tow_per_strata and percent >= 0)
+    scale_fill_manual(values = c("#FF1493", "#94dfffff")) +
     geom_sf(data = EEZ, linetype = "dashed") +
     coord_sf(crs = "+init=epsg:4269", xlim = long_lim, ylim = lat_lim) +
     theme(legend.direction = "vertical", legend.box = "horizontal") +
     guides(size = guide_legend(order = 1),
-           shape = guide_legend(order = 2)) +
-    viridis::scale_fill_viridis(discrete = TRUE, begin = 1, end = 0.55) +
+            shape = guide_legend(order = 2)) +
+    #viridis::scale_fill_viridis(discrete = TRUE, begin = 1, end = 0.55) +
     ggtitle(paste0("Effort threshold = ", threshold, " tow/nm^2")) 
   # Save map
   ggsave(effort_map, filename = plot_name, width = plot_width)
@@ -103,3 +105,6 @@ heat_map_function <- function(data, shape_file_folder, threshold,
   
   return(return_list)
 }
+
+
+#results_nefsc = heat_map_function(data=here::here("DATA/all_NEFSC_tows.csv"), shape_file_folder= here::here("DATA"), threshold=0.0139, long_lim = c(-78.5, -65), lat_lim = c(32, 45)) # uses default start_year
