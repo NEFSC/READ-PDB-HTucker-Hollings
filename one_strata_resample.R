@@ -37,7 +37,7 @@ library(sf)
 
 #' @param data A string, the file path to the .csv file of input survey tow data for a single species to be re-sampled, no default.
 #' @param strata_group A list containing named vectors of strata to be grouped, no default. 
-#' @param number_tows The total number of tows you want to resample for each strata_group
+#' @param number_tows The total number of tows you want to resample for each strata_group, or a string "max" to return all original tows (no resampling) with strata_group definitions implemented for downstream index calculations. No default.
 #' 
 #' @return
 #' 
@@ -47,6 +47,12 @@ library(sf)
 #'                    strata_group = list("646566" = c(3640, 3650, 3660),
 #'                                          "596061" = c(3590, 3600, 3610)),
 #'                     number_tows = 3) #!!! May not work for 6 yet but should work for 3
+#'                     
+#' # Return all original tows but implement strata_group definitions for downstream index calculations
+#'   strata_resample(data = here::here("DATA/winter_flounder_survey.csv"),
+#'                    strata_group = list("646566" = c(3640, 3650, 3660),
+#'                                          "596061" = c(3590, 3600, 3610)),
+#'                     number_tows = "max")                  
 
 strata_resample <- function(data, strata_group, number_tows){
   
@@ -81,28 +87,32 @@ strata_resample <- function(data, strata_group, number_tows){
              STRATUM = new_stratum_area$STRATUM, # Populate new stratum name
              STRATUM_AREA = new_stratum_area$STRATUM_AREA) # Re-assign STRATUM name and STRATUM_AREA to match new custom group
       
-    ### !!! EML adding a call to not resample if the number of available tows is equal to or less than number_tows
-    ### !!! EML paused for now, but if pick up again - split off the cases where real tows < number_tows and don't do any resampling, then regroup
-    group_total_tows <- group_data %>%
-      group_by(PURPOSE_CODE, YEAR, SEASON, STRATUM) %>%
-      summarise(TOTAL_TOW = n())
+    # ### !!! EML adding a call to not resample if the number of available tows is equal to or less than number_tows
+    # ### !!! EML paused for now, but if pick up again - split off the cases where real tows < number_tows and don't do any resampling, then regroup
+    # group_total_tows <- group_data %>%
+    #   group_by(PURPOSE_CODE, YEAR, SEASON, STRATUM) %>%
+    #   summarise(TOTAL_TOW = n())
     
-    
-    
-    # First select 1 resample from each oldSTRATUM in the group
-    group_resample <- group_data %>% 
+    # If number_tows == "max", no resampling occurs (all data used) but STRATUM and STRATUM_AREA are relabeled with specified strata_group definitions
+    if(number_tows == "max"){
+      group_resample <- rbind(group_resample, group_data) # No resampling, return all available tows
+      
+    } else{ # Resample
+      # First select 1 resample from each oldSTRATUM in the group
+      group_resample <- group_data %>% 
         group_by(PURPOSE_CODE, YEAR, SEASON, oldSTRATUM) %>% 
         sample_n(size = 1, replace = FALSE) %>%
-      rbind(group_resample, .) # Append to resampled data
-    
-    # Next resample remaining tows across entire group if number_tows > length(strata_group[igroup][[1]])
-    if(number_tows > length(strata_group[igroup][[1]])){
-      group_resample <- group_data %>% 
-        filter(!(rownumber %in% group_resample$rownumber)) %>% # Remove rows that have already been resampled
-        group_by(PURPOSE_CODE, YEAR, SEASON, STRATUM) %>%  # Pull remaining samples from new STRATUM group definition
-        sample_n(size = number_tows - length(strata_group[igroup][[1]]), replace = FALSE) %>%
         rbind(group_resample, .) # Append to resampled data
-    }
+      
+      # Next resample remaining tows across entire group if number_tows > length(strata_group[igroup][[1]])
+      if(number_tows > length(strata_group[igroup][[1]])){
+        group_resample <- group_data %>% 
+          filter(!(rownumber %in% group_resample$rownumber)) %>% # Remove rows that have already been resampled
+          group_by(PURPOSE_CODE, YEAR, SEASON, STRATUM) %>%  # Pull remaining samples from new STRATUM group definition
+          sample_n(size = number_tows - length(strata_group[igroup][[1]]), replace = FALSE) %>%
+          rbind(group_resample, .) # Append to resampled data
+      }
+    } # End if statement to conduct resampling
     
   } # End loop over strata_group
   
