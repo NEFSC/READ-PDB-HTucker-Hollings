@@ -5,6 +5,7 @@ library(DataExplorer)
 library(ROracle)
 # devtools::install_github("NEFSC/READ-PDB-COLLABORATIONS", dependencies = TRUE)
 library(pdbCollaborations)
+library(here)
 
 
 
@@ -15,21 +16,19 @@ library(pdbCollaborations)
 # Read in all the functions we need
 # one_strata_resample.R
 
-# HMT Copy:
-# source("~/READ-PDB-HTucker-Hollings/one_strata_resample.r")
-# EML Copy:
-source("~/GitHub/READ-PDB-HTucker-Hollings/one_strata_resample.r")
+source(here::here("one_strata_resample.r"))
 
 
 # calcIndex.R (from the READ-PDB-COLLABORATIONS repo)
 
 
 # Set up simulation specifications
-iterations = 5 # Specify how many iterations, put that in an object
+iterations = 50 # Specify how many iterations, put that in an object
 ntows = 3:6
 use_strata_group = list("646566" = c(3640, 3650, 3660),
                         "596061" = c(3590, 3600, 3610))
-
+saveformat = "CSV" # How do you want growing output to be saved (either "RDS" or "CSV")
+dir.create(file.path(here::here("RESULTS")), showWarnings = FALSE)
 
 # Make holder objects to store the many outputs
 # hint - you might need to fill in the column heading ahead of time
@@ -72,6 +71,9 @@ for(yyy in ntows)
   # Use rbind to connect it to final_resample_results
   final_resample_results <- rbind(final_resample_results, full_resample_indices)
   
+  if(saveformat == "RDS") saveRDS(final_resample_results,file="RESULTS/final_resample_results.RDS")
+  if(saveformat == "CSV") write.csv(final_resample_results,file="RESULTS/final_resample_results.csv")
+  
   # Save strata output and label
   full_strata_mean <- resample_index$strata_means_summary %>%
     add_column(number_tows = yyy, # One column is all the number of tows
@@ -82,6 +84,9 @@ for(yyy in ntows)
   # Use rbind to append strata means to final_strata_mean storage
   final_strata_mean <- rbind(final_strata_mean, full_strata_mean)
   
+  # Save final_strata_mean
+  if(saveformat == "RDS") saveRDS(final_strata_mean,file="RESULTS/final_strata_mean.RDS")
+  if(saveformat == "CSV") write.csv(final_strata_mean,file="RESULTS/final_strata_mean.csv")
   
     # hint - use whatever variable you're using to loop to help
     
