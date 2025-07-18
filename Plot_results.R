@@ -13,7 +13,16 @@ original_strata_mean <- read.csv(here::here("DATA/winterFlounder_strata_mean_des
   DataExplorer::drop_columns("X") %>%
   mutate(number_tows = "all", superstrata = "none", iteration_number = "-1", simID = "-1")
 
+# Read in indices and strata means for 646566_596061 strata groups with no resampling
+alt1_indices <- read.csv(here::here("DATA/winterFlounder_indices_646566_596061.csv")) %>%
+  DataExplorer::drop_columns("X") 
+alt1_strata_mean <- read.csv(here::here("DATA/winterFlounder_indices_646566_596061.csv")) %>%
+  DataExplorer::drop_columns("X") 
+#!!! AH1
 
+# New shape files for super strata
+strata_596061 <- st_read(dsn = here::here("DATA/strata596061.shp")) 
+strata_646566 <- st_read(dsn = here::here("DATA/strata646566.shp")) 
 
 organized_final_results
 organized_final_strata_mean
@@ -44,14 +53,56 @@ final_resample_results %>% mutate(superstrata = as.character(superstrata)) %>%
   ylab("Stratified Mean (kg)") + 
   facet_wrap(.~superstrata + number_tows + SEASON)
 
+##### Plot original index against restratified index (alt1) with all tows included #####
+# NO !!! AH2
+rbind(original_indices, alt1_indices) %>% DataExplorer::drop_columns(c("iteration_number", "simID", "number_tows")) %>%
+  filter(PURPOSE_CODE == 10) %>%
+  ggplot() + 
+  geom_line(aes(x = YEAR, y = STRAT_MEAN_NO, group = superstrata, colour = superstrata)) +
+  facet_wrap(.~ SEASON)
+# WT
+rbind(original_indices, alt1_indices) %>% DataExplorer::drop_columns(c("iteration_number", "simID", "number_tows")) %>%
+  filter(PURPOSE_CODE == 10) %>%
+  ggplot() + 
+  geom_line(aes(x = YEAR, y = STRAT_MEAN_WT, group = superstrata, colour = superstrata)) +
+  facet_wrap(.~ SEASON)
+
+# diff NO !!! AH3
+original_indices %>% 
+  filter(PURPOSE_CODE == 10) %>%
+  mutate(original_STRAT_MEAN_NO = STRAT_MEAN_NO, original_STRAT_MEAN_WT = STRAT_MEAN_WT) %>%
+  select(YEAR, SEASON, PURPOSE_CODE, original_STRAT_MEAN_NO, original_STRAT_MEAN_WT) %>%
+  left_join(., alt1_indices) %>%
+  mutate(diff_STRAT_MEAN_NO = original_STRAT_MEAN_NO - STRAT_MEAN_NO) %>%
+  ggplot() +
+  geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_NO)) +
+  geom_point(aes(x=YEAR, y = diff_STRAT_MEAN_NO)) +
+  geom_hline(yintercept = 0, colour = "red") +
+  ggtitle("Original - alt1") + 
+  facet_wrap(.~SEASON)
+# diff WT
+original_indices %>% 
+  filter(PURPOSE_CODE == 10) %>%
+  mutate(original_STRAT_MEAN_NO = STRAT_MEAN_NO, original_STRAT_MEAN_WT = STRAT_MEAN_WT) %>%
+  select(YEAR, SEASON, PURPOSE_CODE, original_STRAT_MEAN_NO, original_STRAT_MEAN_WT) %>%
+  left_join(., alt1_indices) %>%
+  mutate(diff_STRAT_MEAN_WT = original_STRAT_MEAN_WT - STRAT_MEAN_WT) %>%
+  ggplot() +
+  geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_WT)) +
+  geom_point(aes(x=YEAR, y = diff_STRAT_MEAN_WT)) +
+  geom_hline(yintercept = 0, colour = "red") +
+  ggtitle("Original - alt1") +
+  facet_wrap(.~SEASON)
+
+
 ##### Plots for final_strata_mean ######
 final_strata_mean %>% summary()
 
 ###### Plot of survey mean kg/tow over time #####
-final_strata_mean %>% mutate(STRATUM = as.character(STRATUM)) %>%
-  filter(STRATUM == "596061") %>% # This adds the original series for strata 59, which is probably not a useful comparison for superstrata 646566
+final_strata_mean %>% mutate(STRATUM = as.character(STRATUM)) %>% #!!! AH4
+  filter(STRATUM == "596061") %>% # This adds the original series for strata 59-61
   ggplot() +
-  geom_line(aes(x = YEAR, y = CATCH_WT, colour = STRATUM, group = iteration_number), alpha = 0.5) +
+  geom_line(aes(x = YEAR, y = CATCH_WT, colour = STRATUM, group = iteration_number)) +
   geom_line(data = select(filter(original_strata_mean, STRATUM == 3590), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "59"), colour = "black") + # This adds the original series for strata 59
   geom_line(data = select(filter(original_strata_mean, STRATUM == 3600), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "60"), colour = "black") + # This adds the original series for strata 60
   geom_line(data = select(filter(original_strata_mean, STRATUM == 3610), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "61"), colour = "black") + # This adds the original series for strata 61
@@ -59,6 +110,89 @@ final_strata_mean %>% mutate(STRATUM = as.character(STRATUM)) %>%
   facet_wrap(.~STRATUM + number_tows + SEASON) +
   scale_linetype_manual(values = c("solid", "longdash", "dotted")) +
   labs(linetype = "original_STRATUM")
+
+final_strata_mean %>% mutate(STRATUM = as.character(STRATUM)) %>%
+  filter(STRATUM == "646566") %>% # This adds the original series for strata 64-66
+  ggplot() +
+  geom_line(aes(x = YEAR, y = CATCH_WT, colour = STRATUM, group = iteration_number)) +
+  geom_line(data = select(filter(original_strata_mean, STRATUM == 3640), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "64"), colour = "black") + # This adds the original series for strata 59
+  geom_line(data = select(filter(original_strata_mean, STRATUM == 3650), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "65"), colour = "black") + # This adds the original series for strata 60
+  geom_line(data = select(filter(original_strata_mean, STRATUM == 3660), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "66"), colour = "black") + # This adds the original series for strata 61
+  ylab("Mean kg/tow") + 
+  facet_wrap(.~STRATUM + number_tows + SEASON) +
+  scale_linetype_manual(values = c("solid", "longdash", "dotted")) +
+  labs(linetype = "original_STRATUM")
+
+all_tows <- read.csv(here::here("DATA/winter_flounder_survey.csv")) %>% mutate(STRATA = STRATUM)
+all_tows %>% filter(STRATUM %in% c(3640, 3650, 3660)) %>% 
+  group_by(PURPOSE_CODE, YEAR, STRATUM, SEASON) %>%
+  count() #!!! AH5
+ 
+plot_tows <- all_tows %>%
+  mutate(Tows = case_when(CATCH_WT_CAL > 0 ~ "positive",
+                          CATCH_WT_CAL == 0 ~ "zero"),
+         `Catch weight` = CATCH_WT_CAL,
+         Tow_no = case_when(CATCH_NO_CAL > 0 ~ "positive",
+                            CATCH_NO_CAL == 0 ~ "zero"),
+         `Catch number` = CATCH_NO_CAL) %>% 
+  st_as_sf(., coords = c("LONGITUDE", "LATITUDE"), crs = 4269)
+strata <- st_read(dsn = paste(shape_file_folder, "strata.shp", sep = "/")) #%>%
+  st_transform(., 8857)
+ggplot() + 
+  geom_sf(data = strata, fill = "white", colour = "darkgray") + # All strata
+  geom_sf(data = filter(plot_tows, YEAR %in% c(2009, 2018, 2024)), aes(shape = Tows, size = `Catch weight`), alpha = 0.25) +
+  coord_sf(crs = "+init=epsg:4269", xlim = c(-71.1, -69.5), ylim = c(41.75, 43)) + 
+  scale_shape_manual(values=c(16,3)) +
+  facet_wrap(.~ SEASON + YEAR) #!!! AH6
+  
+#!!! something in spring changed around 2018, spawning? timing? habitat/depth? - timing/depth more prominent
+# Look at trends across all strata!!! AH7 across all tows
+plot_tows %>% 
+  ggplot() +
+  geom_point(aes(y=YEAR,x=`Catch weight`))
+# WT
+plot_tows %>% mutate(YEAR= as.character(YEAR)) %>%
+  ggplot() +
+ggridges::geom_density_ridges(aes(y=YEAR, x=`Catch weight`))
+# NO
+plot_tows %>% mutate(YEAR= as.character(YEAR)) %>%
+  ggplot() +
+  ggridges::geom_density_ridges(aes(y=YEAR, x=`Catch number`))
+
+plot_tows %>% mutate(bigCatch = case_when(`Catch weight` >= 20 ~ TRUE, .default = FALSE)) %>%
+  ggplot() +
+  geom_bar(aes(x=YEAR, fill = bigCatch), position = "fill")
+
+# Look at trends for superstrata only !!! AH8
+plot_tows %>% mutate(bigCatch = case_when(`Catch weight` >= 20 ~ TRUE, .default = FALSE)) %>%
+  filter(STRATUM %in% c(3640, 3650, 3660, 3590, 3600, 3610)) %>%
+  ggplot() +
+  geom_bar(aes(x=YEAR, fill = bigCatch), position = "fill") + 
+  geom_vline(xintercept = 2018)
+
+# Sampling timing #AH9 - could be better since currently squished together month + year, day of year would be a better metric, probably could find a way to back this out
+plot_tows %>% mutate(DAY = case_when(DAY <= 9 ~ paste0("0",DAY),
+                                     .default = as.character(DAY)),
+                     Month_day = as.numeric(paste0(MONTH,DAY))) %>% 
+  filter(SEASON == 'FALL') %>%
+  ggplot() +
+  geom_point(aes(y=YEAR, x = Month_day, group = YEAR)) +
+  facet_wrap(.~SEASON)
+
+# Spring
+plot_tows %>% mutate(DAY = case_when(DAY <= 9 ~ paste0("0",DAY),
+                                     .default = as.character(DAY)),
+                     Month_day = as.numeric(paste0(MONTH,DAY))) %>% 
+  filter(SEASON == 'SPRING') %>% filter(YEAR == 2018) %>% reframe(range(Month_day)) # Pick min/max sampling date manually
+plot_tows %>% mutate(DAY = case_when(DAY <= 9 ~ paste0("0",DAY),
+                                     .default = as.character(DAY)),
+                     Month_day = as.numeric(paste0(MONTH,DAY))) %>% 
+  filter(SEASON == 'SPRING') %>%
+  ggplot() +
+  geom_point(aes(y=YEAR, x = Month_day, group = YEAR)) +
+  facet_wrap(.~SEASON) +
+  geom_vline(xintercept = 415) +
+  geom_vline(xintercept = 514)
 
 
 ###### Plot of survey mean number/tow over time #####
