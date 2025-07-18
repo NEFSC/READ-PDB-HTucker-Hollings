@@ -5,6 +5,7 @@ library(DataExplorer)
 library(ROracle)
 # devtools::install_github("NEFSC/READ-PDB-COLLABORATIONS", dependencies = TRUE)
 library(pdbCollaborations)
+library(here)
 
 
 
@@ -15,17 +16,14 @@ library(pdbCollaborations)
 # Read in all the functions we need
 # one_strata_resample.R
 
-# HMT Copy:
-# source("~/READ-PDB-HTucker-Hollings/one_strata_resample.r")
-# EML Copy:
-source("~/GitHub/READ-PDB-HTucker-Hollings/one_strata_resample.r")
+source(here::here("one_strata_resample.r"))
 
 
 # calcIndex.R (from the READ-PDB-COLLABORATIONS repo)
 
 
 # Set up simulation specifications
-iterations = 5 # Specify how many iterations, put that in an object
+iterations = 50 # Specify how many iterations, put that in an object
 ntows = 3:6
 use_strata_group = list("646566" = c(3640, 3650, 3660),
                         "596061" = c(3590, 3600, 3610))
