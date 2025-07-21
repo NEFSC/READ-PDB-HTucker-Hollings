@@ -93,7 +93,7 @@ original_indices %>%
   geom_hline(yintercept = 0, colour = "red") +
   ggtitle("Original - alt1") +
   facet_wrap(.~SEASON)
-
+# weights changing, 2010-2015 wierd trend, age: fewer big or more small?, reproduction: maturity status, distribution, fishery catch/dynamics, ecosystem change
 
 ##### Plots for final_strata_mean ######
 final_strata_mean %>% summary()
@@ -161,39 +161,64 @@ plot_tows %>% mutate(YEAR= as.character(YEAR)) %>%
 
 plot_tows %>% mutate(bigCatch = case_when(`Catch weight` >= 20 ~ TRUE, .default = FALSE)) %>%
   ggplot() +
-  geom_bar(aes(x=YEAR, fill = bigCatch), position = "fill")
+  geom_bar(aes(x=YEAR, fill = bigCatch), position = "fill") +
+  facet_wrap(.~SEASON) #!!! fewer catches with large catch WT could explain spring trend
 
 # Look at trends for superstrata only !!! AH8
 plot_tows %>% mutate(bigCatch = case_when(`Catch weight` >= 20 ~ TRUE, .default = FALSE)) %>%
   filter(STRATUM %in% c(3640, 3650, 3660, 3590, 3600, 3610)) %>%
   ggplot() +
   geom_bar(aes(x=YEAR, fill = bigCatch), position = "fill") + 
-  geom_vline(xintercept = 2018)
+  geom_vline(xintercept = 2018) +
+  facet_wrap(.~SEASON)
 
 # Sampling timing #AH9 - could be better since currently squished together month + year, day of year would be a better metric, probably could find a way to back this out
-plot_tows %>% mutate(DAY = case_when(DAY <= 9 ~ paste0("0",DAY),
-                                     .default = as.character(DAY)),
-                     Month_day = as.numeric(paste0(MONTH,DAY))) %>% 
+plot_tows %>% mutate(DOY = lubridate::yday(TOWDATE)) %>% 
   filter(SEASON == 'FALL') %>%
   ggplot() +
-  geom_point(aes(y=YEAR, x = Month_day, group = YEAR)) +
+  geom_point(aes(y=YEAR, x = DOY, group = YEAR)) +
   facet_wrap(.~SEASON)
 
 # Spring
-plot_tows %>% mutate(DAY = case_when(DAY <= 9 ~ paste0("0",DAY),
-                                     .default = as.character(DAY)),
-                     Month_day = as.numeric(paste0(MONTH,DAY))) %>% 
-  filter(SEASON == 'SPRING') %>% filter(YEAR == 2018) %>% reframe(range(Month_day)) # Pick min/max sampling date manually
-plot_tows %>% mutate(DAY = case_when(DAY <= 9 ~ paste0("0",DAY),
-                                     .default = as.character(DAY)),
-                     Month_day = as.numeric(paste0(MONTH,DAY))) %>% 
+plot_tows %>% mutate(DOY = lubridate::yday(TOWDATE)) %>% 
+  filter(SEASON == 'SPRING') %>% filter(YEAR == 2018) %>% reframe(range(DOY)) # Pick min/max sampling date manually
+plot_tows %>% mutate(DOY = lubridate::yday(TOWDATE),
+                     MONTH = as.character(MONTH)) %>% 
   filter(SEASON == 'SPRING') %>%
   ggplot() +
-  geom_point(aes(y=YEAR, x = Month_day, group = YEAR)) +
+  geom_point(aes(y=YEAR, x = DOY, group = YEAR, colour = MONTH)) +
   facet_wrap(.~SEASON) +
-  geom_vline(xintercept = 415) +
-  geom_vline(xintercept = 514)
+  geom_vline(xintercept = 105) +
+  geom_vline(xintercept = 134) 
 
+# Spring sampling for strata of interest # !!!AH10
+plot_tows %>% mutate(DOY = lubridate::yday(TOWDATE)) %>% 
+  filter(SEASON == 'SPRING') %>% filter(YEAR == 2018) %>% reframe(range(DOY)) # Pick min/max sampling date manually
+plot_tows %>% mutate(DOY = lubridate::yday(TOWDATE),
+                     MONTH = as.character(MONTH)) %>% 
+  filter(SEASON == 'SPRING') %>%
+  filter(STRATUM %in% c(3640, 3650, 3660, 3590, 3600, 3610)) %>%
+  mutate(SUPERSTRATUM = case_when(STRATUM %in% c(3640, 3650, 3660) ~ "646566",
+                                  STRATUM %in% c(3590, 3600, 3610) ~ "596061")) %>%
+  ggplot() +
+  geom_point(aes(y=YEAR, x = DOY, group = YEAR, colour = MONTH, shape = SUPERSTRATUM)) +
+  facet_wrap(.~SEASON) +
+  geom_vline(xintercept = 105) +
+  geom_vline(xintercept = 134) +
+  scale_shape_manual(values = c(1,3))
+
+
+# Plot median DOY 
+plot_tows %>% mutate(DOY = lubridate::yday(TOWDATE),
+                     MONTH = as.character(MONTH)) %>% 
+  filter(PURPOSE_CODE == 10) %>%
+  group_by(PURPOSE_CODE, YEAR, SEASON) %>%
+  reframe(median_DOY = median(DOY)) %>% 
+  ggplot() +
+  geom_line(aes(x=YEAR, y= median_DOY)) +
+  geom_point(aes(x=YEAR, y = median_DOY, group = YEAR)) +
+  facet_wrap(.~SEASON) +
+  geom_vline(xintercept = 2018)
 
 ###### Plot of survey mean number/tow over time #####
 final_strata_mean %>% mutate(STRATUM = as.character(STRATUM)) %>%
