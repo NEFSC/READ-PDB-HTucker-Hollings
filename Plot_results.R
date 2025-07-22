@@ -1,3 +1,9 @@
+#install.packages("ggridges")
+library(ggridges)
+#install.packages("gghalves")
+#install.packages("ggbeeswarm")
+#install.packages("ggdist")
+
 # Plot scripts
 
 
@@ -21,8 +27,8 @@ alt1_strata_mean <- read.csv(here::here("DATA/winterFlounder_indices_646566_5960
 #!!! AH1
 
 # New shape files for super strata
-strata_596061 <- st_read(dsn = here::here("DATA/strata596061.shp")) 
-strata_646566 <- st_read(dsn = here::here("DATA/strata646566.shp")) 
+strata_596061 <- st_read(dsn = here::here("DATA/strata_596061.shp")) 
+strata_646566 <- st_read(dsn = here::here("DATA/strata_646566.shp")) 
 
 organized_final_results
 organized_final_strata_mean
@@ -40,6 +46,7 @@ final_resample_results %>% filter(PURPOSE_CODE == 10) %>%
   ggplot() +
   geom_boxplot(aes(x=number_tows, y=STRAT_MEAN_WT, fill=number_tows)) +
   geom_hline(data = (original_indices %>% filter(PURPOSE_CODE == 10)), aes(yintercept = STRAT_MEAN_WT), linewidth = 1) +
+  scale_fill_manual(values = c("#FF1493", "#EC83C9", "#9794DB", "#89D3FA")) +
   ylab("Stratified Mean (kg)") +
   # scale_fill_manual(values = c("#FF1493")) +
   theme(legend.position="none")+
@@ -58,13 +65,15 @@ final_resample_results %>% mutate(superstrata = as.character(superstrata)) %>%
 rbind(original_indices, alt1_indices) %>% DataExplorer::drop_columns(c("iteration_number", "simID", "number_tows")) %>%
   filter(PURPOSE_CODE == 10) %>%
   ggplot() + 
-  geom_line(aes(x = YEAR, y = STRAT_MEAN_NO, group = superstrata, colour = superstrata)) +
+  geom_line(aes(x = YEAR, y = STRAT_MEAN_NO, group = superstrata, colour = superstrata), linewidth = 1) +
+  scale_color_manual(values = c("#FF1493", "#0093d0")) +
   facet_wrap(.~ SEASON)
 # WT
 rbind(original_indices, alt1_indices) %>% DataExplorer::drop_columns(c("iteration_number", "simID", "number_tows")) %>%
   filter(PURPOSE_CODE == 10) %>%
   ggplot() + 
-  geom_line(aes(x = YEAR, y = STRAT_MEAN_WT, group = superstrata, colour = superstrata)) +
+  geom_line(aes(x = YEAR, y = STRAT_MEAN_WT, group = superstrata, colour = superstrata), linewidth = 1) +
+  scale_color_manual(values = c("#FF1493", "#0093d0")) +
   facet_wrap(.~ SEASON)
 
 # diff NO !!! AH3
@@ -75,10 +84,10 @@ original_indices %>%
   left_join(., alt1_indices) %>%
   mutate(diff_STRAT_MEAN_NO = original_STRAT_MEAN_NO - STRAT_MEAN_NO) %>%
   ggplot() +
-  geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_NO)) +
+  geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_NO), color = "#FF1493") +
   geom_point(aes(x=YEAR, y = diff_STRAT_MEAN_NO)) +
-  geom_hline(yintercept = 0, colour = "red") +
-  ggtitle("Original - alt1") + 
+  geom_hline(yintercept = 0, colour = "#0093d0") +
+  geom_vline(xintercept = 2018, linewidth = 1) + 
   facet_wrap(.~SEASON)
 # diff WT
 original_indices %>% 
@@ -88,9 +97,9 @@ original_indices %>%
   left_join(., alt1_indices) %>%
   mutate(diff_STRAT_MEAN_WT = original_STRAT_MEAN_WT - STRAT_MEAN_WT) %>%
   ggplot() +
-  geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_WT)) +
+  geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_WT), color = "#FF1493") +
   geom_point(aes(x=YEAR, y = diff_STRAT_MEAN_WT)) +
-  geom_hline(yintercept = 0, colour = "red") +
+  geom_hline(yintercept = 0, colour = "#0093d0") +
   ggtitle("Original - alt1") +
   facet_wrap(.~SEASON)
 # weights changing, 2010-2015 wierd trend, age: fewer big or more small?, reproduction: maturity status, distribution, fishery catch/dynamics, ecosystem change
@@ -162,6 +171,7 @@ plot_tows %>% mutate(YEAR= as.character(YEAR)) %>%
 plot_tows %>% mutate(bigCatch = case_when(`Catch weight` >= 20 ~ TRUE, .default = FALSE)) %>%
   ggplot() +
   geom_bar(aes(x=YEAR, fill = bigCatch), position = "fill") +
+  scale_fill_manual(values = c("#FF70B8", "#0093d0")) +
   facet_wrap(.~SEASON) #!!! fewer catches with large catch WT could explain spring trend
 
 # Look at trends for superstrata only !!! AH8
@@ -169,7 +179,8 @@ plot_tows %>% mutate(bigCatch = case_when(`Catch weight` >= 20 ~ TRUE, .default 
   filter(STRATUM %in% c(3640, 3650, 3660, 3590, 3600, 3610)) %>%
   ggplot() +
   geom_bar(aes(x=YEAR, fill = bigCatch), position = "fill") + 
-  geom_vline(xintercept = 2018) +
+  scale_fill_manual(values = c("#FF70B8", "#0093d0")) +
+  geom_vline(xintercept = 2018, linewidth = 1) +
   facet_wrap(.~SEASON)
 
 # Sampling timing #AH9 - could be better since currently squished together month + year, day of year would be a better metric, probably could find a way to back this out
