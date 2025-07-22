@@ -23,7 +23,7 @@ source(here::here("one_strata_resample.r"))
 
 
 # Set up simulation specifications
-iterations = 50 # Specify how many iterations, put that in an object
+iterations = 700 # Specify how many iterations, put that in an object
 ntows = 3:6
 use_strata_group = list("646566" = c(3640, 3650, 3660),
                         "596061" = c(3590, 3600, 3610))
@@ -189,3 +189,15 @@ organized_final_strata_mean <- final_strata_mean %>%
 
 # Compare against non-resampled values
 # hint - T test? dnorm?
+
+#######T TEST########
+final_resample_results_with_true_means <- final_resample_results %>%
+  left_join(original_indices, by = "YEAR")
+
+
+tested_final_resample_results <- final_resample_results %>%
+  t.test(STRAT_MEAN_WT, mu = )
+
+
+
+
