@@ -22,7 +22,7 @@ original_strata_mean <- read.csv(here::here("DATA/winterFlounder_strata_mean_des
 # Read in indices and strata means for 646566_596061 strata groups with no resampling
 alt1_indices <- read.csv(here::here("DATA/winterFlounder_indices_646566_596061.csv")) %>%
   DataExplorer::drop_columns("X") 
-alt1_strata_mean <- read.csv(here::here("DATA/winterFlounder_indices_646566_596061.csv")) %>%
+alt1_strata_mean <- read.csv(here::here("DATA/winterFlounder_strata_mean_646566_596061.csv")) %>%
   DataExplorer::drop_columns("X") 
 #!!! AH1
 
@@ -133,12 +133,12 @@ original_indices %>%
 ##### Plots for final_strata_mean ######
 final_strata_mean %>% summary()
 
-###### Plot of survey mean kg/tow over time #####
-final_strata_mean %>% mutate(STRATUM = as.character(STRATUM)) %>% #!!! AH4
-  filter(STRATUM == "596061", number_tows == "max") %>% # Plot specified superstrata means using all ("max") tows
-  mutate(STRATUM = "Stratum B") %>% # Add plain language superstrata name
+###### Plot of survey mean kg/tow over time (all data, no resampling) #####
+alt1_strata_mean %>% #mutate(STRATUM = as.character(STRATUM)) %>% #!!! AH4
+  #filter(STRATUM == "596061", number_tows == "max") %>% # Plot specified superstrata means using all ("max") tows
+  mutate(superstrata = "Stratum B") %>% # Add plain language superstrata name
   ggplot() +
-  geom_line(aes(x = YEAR, y = CATCH_WT, colour = STRATUM, group = iteration_number), size = 1) + 
+  geom_line(aes(x = YEAR, y = CATCH_WT, colour = superstrata, group = iteration_number), size = 1) + 
   # This adds the original series for strata 59-61
   geom_line(data = select(filter(original_strata_mean, STRATUM == 3590), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "59"), colour = "#0093d0", size = 1) + # This adds the original series for strata 59
   geom_line(data = select(filter(original_strata_mean, STRATUM == 3600), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "60"), colour = "#0093d0", size = 1) + # This adds the original series for strata 60
@@ -149,17 +149,17 @@ final_strata_mean %>% mutate(STRATUM = as.character(STRATUM)) %>% #!!! AH4
   scale_color_manual(values = c("#FF1493")) +
   labs(linetype = "Original design strata", colour = "Altered design strata")
 
-final_strata_mean %>% mutate(STRATUM = as.character(STRATUM)) %>%
-  filter(STRATUM == "646566", number_tows == "max") %>% # Plot specified superstrata means using all ("max") tows
-  mutate(STRATUM = "Stratum A") %>% # Add plain language superstrata name
+alt1_strata_mean %>% #mutate(STRATUM = as.character(STRATUM)) %>%
+  #filter(STRATUM == "646566", number_tows == "max") %>% # Plot specified superstrata means using all ("max") tows
+  mutate(superstrata = "Stratum A") %>% # Add plain language superstrata name
   ggplot() +
-  geom_line(aes(x = YEAR, y = CATCH_WT, colour = STRATUM, group = iteration_number)) +
+  geom_line(aes(x = YEAR, y = CATCH_WT, colour = superstrata, group = iteration_number), size = 1) +
   # This adds the original series for strata 64-66
   geom_line(data = select(filter(original_strata_mean, STRATUM == 3640), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "59"), colour = "#0093d0", size = 1) + # This adds the original series for strata 59
   geom_line(data = select(filter(original_strata_mean, STRATUM == 3650), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "60"), colour = "#0093d0", size = 1) + # This adds the original series for strata 60
   geom_line(data = select(filter(original_strata_mean, STRATUM == 3660), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "61"), colour = "#0093d0", size = 1) + # This adds the original series for strata 61
   ylab("Mean weight (kg/tow)") + 
-  facet_wrap(.~STRATUM + SEASON) +
+  facet_wrap(.~ SEASON) +
   scale_linetype_manual(values = c("solid", "longdash", "dotted")) +
   scale_color_manual(values = c("#FF1493")) +
   labs(linetype = "Original design strata", colour = "Altered design strata")
@@ -277,14 +277,51 @@ final_strata_mean %>% mutate(STRATUM = as.character(STRATUM)) %>%
   ggplot() +
   geom_line(aes(x = YEAR, y = CATCH_NO, colour = STRATUM, group = iteration_number), alpha = 0.5) +
   ylab("Mean number/tow") + 
-  facet_wrap(.~STRATUM + number_tows + SEASON)
+  facet_wrap(.~STRATUM + number_tows + SEASON) 
 
 ###### Boxplot of survey mean kg/tow over time #####
 # This plot could change a lot as iterations increase, could cause issues once all resampling combinations covered for a given year
 final_strata_mean %>% mutate(STRATUM = as.character(STRATUM), number_tows = as.character(number_tows),YEAR = as.character(YEAR)) %>% # Y axis and coloring variables need to be a categorical variable (or a factor)
+  mutate(superstrata = case_when(STRATUM =="646566" ~ "Stratum A", #646566"
+            STRATUM == "596061" ~ "Stratum B")) %>%
+  filter(superstrata == "Stratum A") %>%
   ggplot() +
   geom_boxplot(aes(x=YEAR, y = CATCH_WT, fill = number_tows)) +
-  facet_wrap(.~SEASON+STRATUM) 
+  geom_line(data = select(filter(original_strata_mean, STRATUM == 3590), -number_tows, -STRATUM), aes(x = as.character(YEAR), y = CATCH_WT, linetype = "59", group = SEASON), colour = "black", size = 1) + # This adds the original series for strata 59
+  geom_line(data = select(filter(original_strata_mean, STRATUM == 3600), -number_tows, -STRATUM), aes(x = as.character(YEAR), y = CATCH_WT, linetype = "60", group = SEASON), colour = "black", size = 1) + # This adds the original series for strata 60
+  geom_line(data = select(filter(original_strata_mean, STRATUM == 3610), -number_tows, -STRATUM), aes(x = as.character(YEAR), y = CATCH_WT, linetype = "61", group = SEASON), colour = "black", size = 1) + # This adds the original series for strata 61
+  facet_wrap(.~SEASON) +
+  ylab("Mean weight (kg/tow)") +
+  scale_fill_manual(values = c("#FF1493", "#EC83C9", "#9794DB", "#89D3FA")) +
+  labs(linetype = "Original design strata")
+
+final_strata_mean %>% mutate(STRATUM = as.character(STRATUM), number_tows = as.character(number_tows),YEAR = as.character(YEAR)) %>% # Y axis and coloring variables need to be a categorical variable (or a factor)
+  mutate(superstrata = case_when(STRATUM =="646566" ~ "Stratum A", #646566"
+                                 STRATUM == "596061" ~ "Stratum B")) %>%
+  filter(superstrata == "Stratum B") %>%
+  ggplot() +
+  geom_boxplot(aes(x=YEAR, y = CATCH_WT, fill = number_tows)) +
+  geom_line(data = select(filter(original_strata_mean, STRATUM == 3590), -number_tows, -STRATUM), aes(x = as.character(YEAR), y = CATCH_WT, linetype = "59", group = SEASON), colour = "black", size = 1) + # This adds the original series for strata 59
+  geom_line(data = select(filter(original_strata_mean, STRATUM == 3600), -number_tows, -STRATUM), aes(x = as.character(YEAR), y = CATCH_WT, linetype = "60", group = SEASON), colour = "black", size = 1) + # This adds the original series for strata 60
+  geom_line(data = select(filter(original_strata_mean, STRATUM == 3610), -number_tows, -STRATUM), aes(x = as.character(YEAR), y = CATCH_WT, linetype = "61", group = SEASON), colour = "black", size = 1) + # This adds the original series for strata 61
+  facet_wrap(.~SEASON) +
+  ylab("Mean weight (kg/tow)") +
+  scale_fill_manual(values = c("#FF1493", "#EC83C9", "#9794DB", "#89D3FA")) +
+  labs(linetype = "Original design strata")
+
+
+
+alt1_strata_mean %>% #mutate(STRATUM = as.character(STRATUM)) %>% #!!! AH4
+  #filter(STRATUM == "596061", number_tows == "max") %>% # Plot specified superstrata means using all ("max") tows
+  mutate(superstrata = "Stratum B") %>% # Add plain language superstrata name
+  ggplot() +
+  geom_line(aes(x = YEAR, y = CATCH_WT, colour = superstrata, group = iteration_number), size = 1) + 
+  # This adds the original series for strata 59-61
+  geom_line(data = select(filter(original_strata_mean, STRATUM == 3590), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "59"), colour = "#0093d0", size = 1) + # This adds the original series for strata 59
+  geom_line(data = select(filter(original_strata_mean, STRATUM == 3600), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "60"), colour = "#0093d0", size = 1) + # This adds the original series for strata 60
+  geom_line(data = select(filter(original_strata_mean, STRATUM == 3610), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "61"), colour = "#0093d0", size = 1) + # This adds the original series for strata 61
+  
+
 
 # Try a half-violin plot to help ID when all resample combinations covered
 library(gghalves)
