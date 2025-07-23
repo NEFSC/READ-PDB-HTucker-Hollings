@@ -16,9 +16,11 @@
 #' }
 #' @examples
 #' # GOM Winter flounder example 
-#' results_GOMwinter = heat_map_function(data=here::here("DATA/winter_flounder_survey.csv"), shape_file_folder= here::here("DATA"), threshold=0.0139, long_lim = c(-71, -69.5), lat_lim = c(41.5, 43)) # uses default start_year
+results_GOMwinter = heat_map_function(data=here::here("DATA/winter_flounder_survey.csv"), shape_file_folder= here::here("DATA"), threshold=0.0139, long_lim = c(-71, -67), lat_lim = c(41.5, 44.5)) # uses default start_year
+results_GOMwinter = superstrata_only_heat_map_function(data=here::here("DATA/winter_flounder_survey.csv"), shape_file_folder= here::here("DATA"), threshold=0.0139, long_lim = c(-71, -67), lat_lim = c(41.5, 44.5)) # uses default start_year
+
 #' # NEFSC survey map example
-#' results_nefsc = heat_map_function(data=here::here("DATA/all_NEFSC_tows.csv"), shape_file_folder= here::here("DATA"), threshold=0.0139, long_lim = c(-78.5, -65), lat_lim = c(32, 45)) # uses default start_year
+results_nefsc = heat_map_function(data=here::here("DATA/all_NEFSC_tows.csv"), shape_file_folder= here::here("DATA"), threshold=0.0139, long_lim = c(-78.5, -65), lat_lim = c(32, 45)) # uses default start_year
 #'
 #' NOTE: Mapped survey effort is based on the maximum number of tows in each strata since start_year 
 
@@ -28,6 +30,12 @@ library(DataExplorer)
 # install.packages("sf")
 library(sf)
 
+
+
+
+#full bts -- long_lim = c(-78.5, -65), lat_lim = c(32, 45)
+#winter flounder -- long_lim = c(-71, -67), lat_lim = c(41.5, 44.5)
+#mass super strata -- long_lim = c(-71, -69.5), lat_lim = c(41.5, 43)
 
 
 
@@ -91,7 +99,7 @@ heat_map_function <- function(data, shape_file_folder, threshold,
   effort_map <- ggplot() +
     geom_sf(data= strata, fill="white", colour = "darkgrey") +
     geom_sf(data = filter(heat_map_actual, is.na(percent)==FALSE), aes(fill = status, geometry = geometry), colour = "gray30") + # Only plot colored strata for strata with samples after start_year (will have a tow_per_strata and percent >= 0)
-    scale_fill_manual(values = c("#FF1493", "#94dfffff")) +
+    scale_fill_manual(values = c("#FF1493", "#94dfff")) +
     geom_sf(data = EEZ, linetype = "dashed") +
     coord_sf(crs = "+init=epsg:4269", xlim = long_lim, ylim = lat_lim) +
     theme(legend.direction = "vertical", legend.box = "horizontal") +
@@ -179,9 +187,9 @@ superstrata_only_heat_map_function <- function(data, shape_file_folder, threshol
     geom_sf(data= strata, fill="white", colour = "darkgrey") +
     #geom_sf(data= strata, fill="#d6f3ffff", colour = "darkgrey") +
     geom_sf(data = filter(heat_map_actual, is.na(percent)==FALSE), aes(fill = status, geometry = geometry), colour = "gray30") +
-    scale_fill_manual(values = c("#FF70B8", "#94dfffff")) +
-    geom_sf(data= superstrata1, fill="#FF70B8", colour = "grey14") +
-    geom_sf(data= superstrata2, fill="#FF70B8", colour = "grey14") +
+    scale_fill_manual(values = c("#FF1493", "#94dfffff")) +
+    geom_sf(data= superstrata1, fill="#FF1493", colour = "grey14") +
+    geom_sf(data= superstrata2, fill="#FF1493", colour = "grey14") +
     coord_sf(crs = "+init=epsg:4269", xlim = long_lim, ylim = lat_lim) +
     theme(legend.direction = "vertical", legend.box = "horizontal") +
     guides(size = guide_legend(order = 1),
