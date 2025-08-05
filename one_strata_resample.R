@@ -85,19 +85,22 @@ strata_resample <- function(data, strata_group, number_tows){
       filter(STRATUM %in% strata_group[igroup][[1]]) %>% # Pick strata group data
       mutate(oldSTRATUM = STRATUM, # Archive original stratum because need to ensure 1 sample from each
              STRATUM = new_stratum_area$STRATUM, # Populate new stratum name
-             STRATUM_AREA = new_stratum_area$STRATUM_AREA) # Re-assign STRATUM name and STRATUM_AREA to match new custom group
+             STRATUM_AREA = new_stratum_area$STRATUM_AREA) %>% # Re-assign STRATUM name and STRATUM_AREA to match new custom group
+      # group_by(PURPOSE_CODE, YEAR, SEASON, STRATUM) %>%
+      add_count(PURPOSE_CODE, YEAR, SEASON, STRATUM, name="NTOW")
       
     # ### !!! EML adding a call to not resample if the number of available tows is equal to or less than number_tows
     # ### !!! EML paused for now, but if pick up again - split off the cases where real tows < number_tows and don't do any resampling, then regroup
-    # group_total_tows <- group_data %>%
-    #   group_by(PURPOSE_CODE, YEAR, SEASON, STRATUM) %>%
-    #   summarise(TOTAL_TOW = n())
+    
     
     # If number_tows == "max", no resampling occurs (all data used) but STRATUM and STRATUM_AREA are relabeled with specified strata_group definitions
     if(number_tows == "max"){
       group_resample <- rbind(group_resample, group_data) # No resampling, return all available tows
       
-    } else{ # Resample
+    } else if(number_tows > NTOW){
+      group_resample <- rbind(group_resample, group_data)
+    }
+      else{ # Resample
       # First select 1 resample from each oldSTRATUM in the group
       group_resample <- group_data %>% 
         group_by(PURPOSE_CODE, YEAR, SEASON, oldSTRATUM) %>% 
