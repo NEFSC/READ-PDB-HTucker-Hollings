@@ -132,8 +132,8 @@ final_resample_results %>% select(number_tows, superstrata, simID, PURPOSE_CODE)
 #NEW SUPER STRATA BY LAT PLAYING AROUND ------------------------------------------------------
 
 iterations = 10 # Specify how many iterations, put that in an object
-ntows = 3
-use_strata_group = list("6459" = c(3610, 3590),
+ntows = 1
+use_strata_group = list("6459" = c(3640, 3590),
                         "6560" = c(3650, 3600), 
                         "6661" = c(3660, 3610))
 saveformat = "CSV" # How do you want growing output to be saved (either "RDS" or "CSV")
