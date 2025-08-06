@@ -143,8 +143,8 @@ dir.create(file.path(here::here("RESULTS")), showWarnings = FALSE)
 # hint - you might need to fill in the column heading ahead of time
 # OR the very first time you do the loop (if zzz = 1, you don't append, you just save the data frame itself)
 
-final_resample_resultsSECOND <- data.frame()
-final_strata_meanSECOND <- data.frame()
+final_resample_resultsCDE <- data.frame()
+final_strata_meanCDE <- data.frame()
 
 for(yyy in ntows)
 {
@@ -171,10 +171,10 @@ for(yyy in ntows)
                  simID = iterationID) # Unique ID for each simulation (not guaranteed but likely not duplicated)
     
     # Use rbind to connect it to final_resample_results
-    final_resample_resultsSECOND <- rbind(final_resample_resultsSECOND, full_resample_indices)
+    final_resample_resultsCDE <- rbind(final_resample_resultsCDE, full_resample_indices)
     
-    if(saveformat == "RDS") saveRDS(final_resample_resultsSECOND,file="RESULTS/final_resample_resultsSECOND.RDS")
-    if(saveformat == "CSV") write.csv(final_resample_resultsSECOND,file="RESULTS/final_resample_resultsSECOND.csv")
+    if(saveformat == "RDS") saveRDS(final_resample_resultsCDE,file="RESULTS/final_resample_resultsCDE.RDS")
+    if(saveformat == "CSV") write.csv(final_resample_resultsCDE,file="RESULTS/final_resample_resultsCDE.csv")
     
     # Save strata output and label
     full_strata_mean <- resample_index$strata_means_summary %>%
@@ -184,11 +184,11 @@ for(yyy in ntows)
                  simID = iterationID)
     
     # Use rbind to append strata means to final_strata_mean storage
-    final_strata_meanSECOND <- rbind(final_strata_meanSECOND, full_strata_mean)
+    final_strata_meanCDE <- rbind(final_strata_meanCDE, full_strata_mean)
     
     # Save final_strata_mean
-    if(saveformat == "RDS") saveRDS(final_strata_mean,file="RESULTS/final_strata_meanSECOND.RDS")
-    if(saveformat == "CSV") write.csv(final_strata_mean,file="RESULTS/final_strata_meanSECOND.csv")
+    if(saveformat == "RDS") saveRDS(final_strata_meanCDE,file="RESULTS/final_strata_meanCDE.RDS")
+    if(saveformat == "CSV") write.csv(final_strata_meanCDE,file="RESULTS/final_strata_meanCDE.csv")
     
     # hint - use whatever variable you're using to loop to help
     
