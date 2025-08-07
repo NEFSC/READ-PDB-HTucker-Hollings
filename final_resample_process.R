@@ -34,8 +34,8 @@ dir.create(file.path(here::here("RESULTS")), showWarnings = FALSE)
 # hint - you might need to fill in the column heading ahead of time
 # OR the very first time you do the loop (if zzz = 1, you don't append, you just save the data frame itself)
 
-final_resample_results <- data.frame()
-final_strata_mean <- data.frame()
+final_resample_resultsAB <- data.frame()
+final_strata_meanAB <- data.frame()
 
 # zzz <- 2
 # 
@@ -69,10 +69,10 @@ for(yyy in ntows)
                simID = iterationID) # Unique ID for each simulation (not guaranteed but likely not duplicated)
     
   # Use rbind to connect it to final_resample_results
-  final_resample_results <- rbind(final_resample_results, full_resample_indices)
+  final_resample_resultsAB <- rbind(final_resample_resultsAB, full_resample_indices)
   
-  if(saveformat == "RDS") saveRDS(final_resample_results,file="RESULTS/final_resample_results.RDS")
-  if(saveformat == "CSV") write.csv(final_resample_results,file="RESULTS/final_resample_results.csv")
+  if(saveformat == "RDS") saveRDS(final_resample_resultsAB,file="RESULTS/final_resample_resultsAB.RDS")
+  if(saveformat == "CSV") write.csv(final_resample_resultsAB,file="RESULTS/final_resample_resultsAB.csv")
   
   # Save strata output and label
   full_strata_mean <- resample_index$strata_means_summary %>%
@@ -82,11 +82,11 @@ for(yyy in ntows)
                simID = iterationID)
   
   # Use rbind to append strata means to final_strata_mean storage
-  final_strata_mean <- rbind(final_strata_mean, full_strata_mean)
+  final_strata_meanAB <- rbind(final_strata_meanAB, full_strata_mean)
   
   # Save final_strata_mean
-  if(saveformat == "RDS") saveRDS(final_strata_mean,file="RESULTS/final_strata_mean.RDS")
-  if(saveformat == "CSV") write.csv(final_strata_mean,file="RESULTS/final_strata_mean.csv")
+  if(saveformat == "RDS") saveRDS(final_strata_meanAB,file="RESULTS/final_strata_meanAB.RDS")
+  if(saveformat == "CSV") write.csv(final_strata_meanAB,file="RESULTS/final_strata_meanAB.csv")
   
     # hint - use whatever variable you're using to loop to help
     
@@ -131,8 +131,8 @@ final_resample_results %>% select(number_tows, superstrata, simID, PURPOSE_CODE)
 
 #NEW SUPER STRATA BY LAT PLAYING AROUND winter flounder CDE------------------------------------------------------
 
-iterations = 10 # Specify how many iterations, put that in an object
-ntows = 1
+iterations = 700 # Specify how many iterations, put that in an object
+ntows = 3:4
 use_strata_group = list("6459" = c(3640, 3590),
                         "6560" = c(3650, 3600), 
                         "6661" = c(3660, 3610))
