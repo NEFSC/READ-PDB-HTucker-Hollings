@@ -16,13 +16,16 @@
 #' }
 #' @examples
 #' # GOM Winter flounder example 
-results_GOMwinter = heat_map_function(data=here::here("DATA/winter_flounder_survey.csv"), shape_file_folder= here::here("DATA"), threshold=0.0139, long_lim = c(-71, -67), lat_lim = c(41.5, 44.5)) # uses default start_year
+results_GOMwinter = heat_map_function(data=here::here("DATA/winter_flounder_survey.csv"), shape_file_folder= here::here("DATA"), threshold=0.01986, long_lim = c(-71, -67), lat_lim = c(41.5, 44.5)) # uses default start_year
 results_GOMwinter = superstrata_only_heat_map_function(data=here::here("DATA/winter_flounder_survey.csv"), shape_file_folder= here::here("DATA"), threshold=0.0139, long_lim = c(-71, -67), lat_lim = c(41.5, 44.5)) # uses default start_year
 
+# Yellowtail Flounder examples
+results_GOMyellow = heat_map_function(data=here::here("DATA/yellowtail_flounder_survey.csv"), shape_file_folder= here::here("DATA"), threshold=0.01986, long_lim = c(-78.5, -65), lat_lim = c(32, 45)) # uses default start_year
+
 #' # NEFSC survey map example
-results_nefsc = heat_map_function(data=here::here("DATA/all_NEFSC_tows.csv"), shape_file_folder= here::here("DATA"), threshold=0.0139, long_lim = c(-78.5, -65), lat_lim = c(32, 45)) # uses default start_year
+results_nefsc = heat_map_function(data=here::here("DATA/all_NEFSC_tows.csv"), shape_file_folder= here::here("DATA"), threshold=0.01986, long_lim = c(-78.5, -65), lat_lim = c(32, 45)) # uses default start_year
 #'
-#' NOTE: Mapped survey effort is based on the maximum number of tows in each strata since start_year 
+ 
 
 library(tidyverse)
 # install.packages("DataExplorer")
@@ -122,7 +125,10 @@ heat_map_function <- function(data, shape_file_folder, threshold,
 
 
 
-#other map that shows the super strata combined together
+
+
+
+#other map that shows the super strata combined together--------------------------------------------
 
 
 superstrata_only_heat_map_function <- function(data, shape_file_folder, threshold, 
