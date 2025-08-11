@@ -1052,4 +1052,68 @@ YTfinal_resample_resultsCDE %>% filter(PURPOSE_CODE == 10) %>%
         theme_grey(base_size = 16) 
 ```
 
+# Analysis plots
+### Differences between index controls across wf and ytf - weights
+```{r}
+alt1_indices %>%
+  filter(PURPOSE_CODE == 10) %>%
+  mutate(wf_STRAT_MEAN_NO = STRAT_MEAN_NO, wf_STRAT_MEAN_WT = STRAT_MEAN_WT) %>%
+  select(YEAR, SEASON, PURPOSE_CODE, wf_STRAT_MEAN_NO, wf_STRAT_MEAN_WT) %>%
+  left_join(., alt1_indicesYT) %>%
+  mutate(diff_STRAT_MEAN_WT = wf_STRAT_MEAN_WT - STRAT_MEAN_WT,
+         Difference = case_when(diff_STRAT_MEAN_WT > 0 ~ "wf > ytf",
+                                diff_STRAT_MEAN_WT < 0 ~ "wf < ytf",
+                                diff_STRAT_MEAN_WT == 0 ~ "Equal"))%>%
+  ggplot() +
+  geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_WT)) +
+  geom_point(aes(x=YEAR, y = diff_STRAT_MEAN_WT, colour = Difference), size = 2) +
+  geom_hline(yintercept = 0) +
+  #geom_vline(xintercept = 2018, linewidth = 1) +
+  facet_wrap(.~SEASON) +
+  ylab("Difference in index weights") +
+  scale_color_manual(values = c("#1482f4", "#f4df14"))
+```
+
+### Differences between winter flounder alt_1 and alt_2 - weights
+```{r}
+alt1_indices %>%
+  filter(PURPOSE_CODE == 10) %>%
+  mutate(one_STRAT_MEAN_NO = STRAT_MEAN_NO, one_STRAT_MEAN_WT = STRAT_MEAN_WT) %>%
+  select(YEAR, SEASON, PURPOSE_CODE, one_STRAT_MEAN_NO, one_STRAT_MEAN_WT) %>%
+  left_join(., alt2_indices) %>%
+  mutate(diff_STRAT_MEAN_WT = one_STRAT_MEAN_WT - STRAT_MEAN_WT,
+         Difference = case_when(diff_STRAT_MEAN_WT > 0 ~ "alt_1 > alt_2",
+                                diff_STRAT_MEAN_WT < 0 ~ "alt_1 < alt_2",
+                                diff_STRAT_MEAN_WT == 0 ~ "Equal"))%>%
+  ggplot() +
+  geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_WT)) +
+  geom_point(aes(x=YEAR, y = diff_STRAT_MEAN_WT, colour = Difference), size = 2) +
+  geom_hline(yintercept = 0) +
+  #geom_vline(xintercept = 2018, linewidth = 1) +
+  facet_wrap(.~SEASON) +
+  ylab("Difference in index weights") +
+  scale_color_manual(values = c("#e32121ff", "#9e37faff"))
+```
+
+### Differences between yellowtail alt_1 and alt_2
+```{r}
+alt1_indicesYT %>%
+  filter(PURPOSE_CODE == 10) %>%
+  mutate(one_STRAT_MEAN_NO = STRAT_MEAN_NO, one_STRAT_MEAN_WT = STRAT_MEAN_WT) %>%
+  select(YEAR, SEASON, PURPOSE_CODE, one_STRAT_MEAN_NO, one_STRAT_MEAN_WT) %>%
+  left_join(., alt2_indicesYT) %>%
+  mutate(diff_STRAT_MEAN_WT = one_STRAT_MEAN_WT - STRAT_MEAN_WT,
+         Difference = case_when(diff_STRAT_MEAN_WT > 0 ~ "alt_1 > alt_2",
+                                diff_STRAT_MEAN_WT < 0 ~ "alt_1 < alt_2",
+                                diff_STRAT_MEAN_WT == 0 ~ "Equal"))%>%
+  ggplot() +
+  geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_WT)) +
+  geom_point(aes(x=YEAR, y = diff_STRAT_MEAN_WT, colour = Difference), size = 2) +
+  geom_hline(yintercept = 0) +
+  #geom_vline(xintercept = 2018, linewidth = 1) +
+  facet_wrap(.~SEASON) +
+  ylab("Difference in index weights") +
+  scale_color_manual(values = c("#ffe227", "#0e970e", "#5f5f5f"))
+```
+
 # More misc. plots included at the bottom of the plot_results.R script. Maybe go through some of them for bonus slides for the final popdy presentation

@@ -1027,8 +1027,8 @@ YTfinal_resample_resultsCDE$number_tows <- as.factor(YTfinal_resample_resultsCDE
     facet_wrap(.~superstrata + number_tows + SEASON) +
     scale_color_manual(values = c("#FF1493", "#0072A3")) +
     labs(colour = "Survey design")
-
-# shows the specific differences between original index against control (HMT3) - alt1 - winter flounder - numbers 
+  
+# difference between species alt 1
   original_indices %>%
     filter(PURPOSE_CODE == 10) %>%
     mutate(original_STRAT_MEAN_NO = STRAT_MEAN_NO, original_STRAT_MEAN_WT = STRAT_MEAN_WT) %>%
@@ -1047,7 +1047,7 @@ YTfinal_resample_resultsCDE$number_tows <- as.factor(YTfinal_resample_resultsCDE
     ylab("Difference in index numbers") +
     scale_color_manual(values = c("#FF1493", "#0072A3"))
 
-# shows the specific differences between original index against control (HMT3) - alt1 - winter flounder - numbers
+# shows the specific differences between original index against control (HMT3) - alt1 - winter flounder - weight
   original_indices %>% 
     filter(PURPOSE_CODE == 10) %>%
     mutate(original_STRAT_MEAN_NO = STRAT_MEAN_NO, original_STRAT_MEAN_WT = STRAT_MEAN_WT) %>%
@@ -1067,6 +1067,82 @@ YTfinal_resample_resultsCDE$number_tows <- as.factor(YTfinal_resample_resultsCDE
     scale_color_manual(values = c("#FF1493", "#0072A3")) 
     # weights changing, 2010-2015 weird trend, age: fewer big or more small?, reproduction: maturity status, distribution, fishery catch/dynamics, ecosystem change
 
+# Differences between index controls across wf and ytf - weights
+  alt1_indices %>%
+    filter(PURPOSE_CODE == 10) %>%
+    mutate(wf_STRAT_MEAN_NO = STRAT_MEAN_NO, wf_STRAT_MEAN_WT = STRAT_MEAN_WT) %>%
+    select(YEAR, SEASON, PURPOSE_CODE, wf_STRAT_MEAN_NO, wf_STRAT_MEAN_WT) %>%
+    left_join(., alt1_indicesYT) %>%
+    mutate(diff_STRAT_MEAN_WT = wf_STRAT_MEAN_WT - STRAT_MEAN_WT,
+           Difference = case_when(diff_STRAT_MEAN_WT > 0 ~ "wf > ytf",
+                                  diff_STRAT_MEAN_WT < 0 ~ "wf < ytf",
+                                  diff_STRAT_MEAN_WT == 0 ~ "Equal"))%>%
+    ggplot() +
+    geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_WT)) +
+    geom_point(aes(x=YEAR, y = diff_STRAT_MEAN_WT, colour = Difference), size = 2) +
+    geom_hline(yintercept = 0) +
+    #geom_vline(xintercept = 2018, linewidth = 1) +
+    facet_wrap(.~SEASON) +
+    ylab("Difference in index weights") +
+    scale_color_manual(values = c("#1482f4", "#f4df14"))
+  
+#   Differences between winter flounder alt_1 and alt_2 - weights
+  alt1_indices %>%
+    filter(PURPOSE_CODE == 10) %>%
+    mutate(one_STRAT_MEAN_NO = STRAT_MEAN_NO, one_STRAT_MEAN_WT = STRAT_MEAN_WT) %>%
+    select(YEAR, SEASON, PURPOSE_CODE, one_STRAT_MEAN_NO, one_STRAT_MEAN_WT) %>%
+    left_join(., alt2_indices) %>%
+    mutate(diff_STRAT_MEAN_WT = one_STRAT_MEAN_WT - STRAT_MEAN_WT,
+           Difference = case_when(diff_STRAT_MEAN_WT > 0 ~ "alt_1 > alt_2",
+                                  diff_STRAT_MEAN_WT < 0 ~ "alt_1 < alt_2",
+                                  diff_STRAT_MEAN_WT == 0 ~ "Equal"))%>%
+    ggplot() +
+    geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_WT)) +
+    geom_point(aes(x=YEAR, y = diff_STRAT_MEAN_WT, colour = Difference), size = 2) +
+    geom_hline(yintercept = 0) +
+    #geom_vline(xintercept = 2018, linewidth = 1) +
+    facet_wrap(.~SEASON) +
+    ylab("Difference in index weights") +
+    scale_color_manual(values = c("#e32121ff", "#9e37faff"))
+  
+#   Differences between winter flounder alt_1 and alt_2 - numbers
+  alt1_indices %>%
+    filter(PURPOSE_CODE == 10) %>%
+    mutate(one_STRAT_MEAN_NO = STRAT_MEAN_NO, one_STRAT_MEAN_WT = STRAT_MEAN_WT) %>%
+    select(YEAR, SEASON, PURPOSE_CODE, one_STRAT_MEAN_NO, one_STRAT_MEAN_WT) %>%
+    left_join(., alt2_indices) %>%
+    mutate(diff_STRAT_MEAN_NO = one_STRAT_MEAN_NO - STRAT_MEAN_NO,
+           Difference = case_when(diff_STRAT_MEAN_NO > 0 ~ "alt_1 > alt_2",
+                                  diff_STRAT_MEAN_NO < 0 ~ "alt_1 < alt_2",
+                                  diff_STRAT_MEAN_NO == 0 ~ "Equal"))%>%
+    ggplot() +
+    geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_NO)) +
+    geom_point(aes(x=YEAR, y = diff_STRAT_MEAN_NO, colour = Difference), size = 2) +
+    geom_hline(yintercept = 0) +
+    #geom_vline(xintercept = 2018, linewidth = 1) +
+    facet_wrap(.~SEASON) +
+    ylab("Difference in index numbers") +
+    scale_color_manual(values = c("#e32121ff", "#9e37faff"))
+  
+# Differences between yellowtail alt_1 and alt_2
+  alt1_indicesYT %>%
+    filter(PURPOSE_CODE == 10) %>%
+    mutate(one_STRAT_MEAN_NO = STRAT_MEAN_NO, one_STRAT_MEAN_WT = STRAT_MEAN_WT) %>%
+    select(YEAR, SEASON, PURPOSE_CODE, one_STRAT_MEAN_NO, one_STRAT_MEAN_WT) %>%
+    left_join(., alt2_indicesYT) %>%
+    mutate(diff_STRAT_MEAN_WT = one_STRAT_MEAN_WT - STRAT_MEAN_WT,
+           Difference = case_when(diff_STRAT_MEAN_WT > 0 ~ "alt_1 > alt_2",
+                                  diff_STRAT_MEAN_WT < 0 ~ "alt_1 < alt_2",
+                                  diff_STRAT_MEAN_WT == 0 ~ "Equal"))%>%
+    ggplot() +
+    geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_WT)) +
+    geom_point(aes(x=YEAR, y = diff_STRAT_MEAN_WT, colour = Difference), size = 2) +
+    geom_hline(yintercept = 0) +
+    #geom_vline(xintercept = 2018, linewidth = 1) +
+    facet_wrap(.~SEASON) +
+    ylab("Difference in index weights") +
+    scale_color_manual(values = c("#ffe227", "#0e970e", "#5f5f5f"))
+  
 # mapping where the winter flounder live
   plot_tows <- all_tows %>%
   mutate(Tows = case_when(CATCH_WT_CAL > 0 ~ "positive",
@@ -1227,4 +1303,7 @@ library(ggdist)
 #   geom_boxplot(aes(x=number_tows, y = diff_CATCH_WT, fill = number_tows), width = 0.15) +
 #   ggdist::stat_dots(aes(x=number_tows, y = diff_CATCH_WT, fill = number_tows), side = "left", justification = 1.12)  +
 #   facet_wrap(.~SEASON + original_STRATUM)
+
+
+
 
