@@ -297,8 +297,8 @@ for(yyy in ntows)
 
 #yellow tail by lat (CDE)------------------ ------------------------------------------------------
 
-iterations = 10 # Specify how many iterations, put that in an object
-ntows = 1
+iterations = 700 # Specify how many iterations, put that in an object
+ntows = 3:4
 use_strata_group = list("6459" = c(3640, 3590),
                         "6560" = c(3650, 3600), 
                         "6661" = c(3660, 3610))
