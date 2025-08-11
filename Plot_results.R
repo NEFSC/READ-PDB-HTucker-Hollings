@@ -3,6 +3,8 @@ library(ggridges)
 #install.packages("gghalves")
 #install.packages("ggbeeswarm")
 #install.packages("ggdist")
+#install.packages("rmdformats")
+
 
 # Plot scripts
 
@@ -57,20 +59,17 @@ organized_final_results
 organized_final_strata_mean
 
 # Change number_tows to factor
-final_strata_mean$number_tows <- as.factor(final_strata_mean$number_tows)
-final_resample_results$number_tows <- as.factor(final_resample_results$number_tows)
-
 final_strata_meanAB$number_tows <- as.factor(final_strata_meanAB$number_tows)
 final_resample_resultsAB$number_tows <- as.factor(final_resample_resultsAB$number_tows)
 
 final_strata_meanCDE$number_tows <- as.factor(final_strata_meanCDE$number_tows)
 final_resample_resultsCDE$number_tows <- as.factor(final_resample_resultsCDE$number_tows)
 
-YTfinal_strata_meanAB$number_tows <- as.factor(final_strata_meanAB$number_tows)
-YTfinal_resample_resultsAB$number_tows <- as.factor(final_resample_resultsAB$number_tows)
+YTfinal_strata_meanAB$number_tows <- as.factor(YTfinal_strata_meanAB$number_tows)
+YTfinal_resample_resultsAB$number_tows <- as.factor(YTfinal_resample_resultsAB$number_tows)
 
-YTfinal_strata_meanCDE$number_tows <- as.factor(final_strata_meanCDE$number_tows)
-YTfinal_resample_resultsCDE$number_tows <- as.factor(final_resample_resultsCDE$number_tows)
+YTfinal_strata_meanCDE$number_tows <- as.factor(YTfinal_strata_meanCDE$number_tows)
+YTfinal_resample_resultsCDE$number_tows <- as.factor(YTfinal_resample_resultsCDE$number_tows)
 # organized_final_strata_mean$number_tows <- as.factor(organized_final_strata_mean$number_tows)
 # organized_final_results$number_tows <- as.factor(organized_final_results$number_tows)
 
