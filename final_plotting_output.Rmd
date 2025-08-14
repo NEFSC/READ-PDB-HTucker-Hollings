@@ -1047,24 +1047,128 @@ YTfinal_resample_resultsCDE %>% filter(PURPOSE_CODE == 10) %>%
 ```
 
 # Analysis plots
-## HMT 1 analysis
+## HMT 1 analysis (difference between original 6 strata and strata specific means control), hannah needs to add legend based on what amanda wrote yesterday
 ```{r}
 joining_original_strata_meanWF <- original_strata_mean %>%
   filter(PURPOSE_CODE == 10) %>%
   select(YEAR, SEASON, CATCH_WT, CATCH_NO, STRATUM) %>%
-  filter(STRATUM == 3590 | STRATUM == 3600 | STRATUM == 3610 | STRATUM == 3640 | STRATUM == 3650 | STRATUM == 3660)
+  filter(STRATUM == 3590 | STRATUM == 3600 | STRATUM == 3610 | STRATUM == 3640 | STRATUM == 3650 | STRATUM == 3660) %>%
+  mutate(original_STRATUM = STRATUM)
 joining_original_strata_meanYT <- YToriginal_strata_mean %>%
   filter(PURPOSE_CODE == 10) %>%
-  select(YEAR, SEASON, CATCH_WT, CATCH_NO) %>%
-  filter(STRATUM == 3590 | STRATUM == 3600 | STRATUM == 3610 | STRATUM == 3640 | STRATUM == 3650 | STRATUM == 3660)
-
+  select(YEAR, SEASON, CATCH_WT, CATCH_NO, STRATUM) %>%
+  filter(STRATUM == 3590 | STRATUM == 3600 | STRATUM == 3610 | STRATUM == 3640 | STRATUM == 3650 | STRATUM == 3660) %>%
+  mutate(original_STRATUM = STRATUM)
 
 plotting_alt1_strata_means <- alt1_strata_mean %>%
   filter(PURPOSE_CODE == 10) %>%
   mutate(wf_CATCH_WT = CATCH_WT, wf_CATCH_NO = CATCH_NO) %>%
-  select(YEAR, SEASON, wf_CATCH_WT, wf_CATCH_NO) %>%
-  left_join(., joining_original_strata_meanWF) %>%
-  mutate(difference_wf1 = wf_CATCH_WT - CATCH_WT,
+  select(YEAR, SEASON, STRATUM, wf_CATCH_WT, wf_CATCH_NO) %>%
+  full_join(., joining_original_strata_meanWF, by = c("YEAR", "SEASON")) %>%
+  mutate(difference_wf1 = wf_CATCH_WT - CATCH_WT) 
+ggplot(data = plotting_alt1_strata_means, 
+       aes(x = YEAR, y = difference_wf1, color = as.factor(original_STRATUM))) +
+  geom_line() +
+  geom_hline(yintercept = 0) +
+  facet_wrap(.~SEASON) +
+  labs(title = "Winter flounder alt 1",
+       x = "Year",
+       y = "Difference in weights between alternative and original",
+       color = "Original Stratum") +
+  scale_color_viridis_d()
+
+plotting_alt2_strata_means <- alt2_strata_mean %>%
+  filter(PURPOSE_CODE == 10) %>%
+  mutate(wf_CATCH_WT = CATCH_WT, wf_CATCH_NO = CATCH_NO) %>%
+  select(YEAR, SEASON, STRATUM, wf_CATCH_WT, wf_CATCH_NO) %>%
+  full_join(., joining_original_strata_meanWF, by = c("YEAR", "SEASON")) %>%
+  mutate(difference_wf2 = wf_CATCH_WT - CATCH_WT) 
+ggplot(data = plotting_alt2_strata_means, 
+       aes(x = YEAR, y = difference_wf2, color = as.factor(original_STRATUM))) +
+  geom_line() +
+  geom_hline(yintercept = 0) +
+  facet_wrap(.~SEASON) +
+  labs(title = "Winter flounder alt 2",
+       x = "Year",
+       y = "Difference in weights between alternative and original",
+       color = "Original Stratum") +
+  scale_color_viridis_d()
+
+plotting_alt1_strata_meansYT <- alt1_strata_meanYT %>%
+  filter(PURPOSE_CODE == 10) %>%
+  mutate(yt_CATCH_WT = CATCH_WT, yt_CATCH_NO = CATCH_NO) %>%
+  select(YEAR, SEASON, STRATUM, yt_CATCH_WT, yt_CATCH_NO) %>%
+  full_join(., joining_original_strata_meanYT, by = c("YEAR", "SEASON")) %>%
+  mutate(difference_yt1 = yt_CATCH_WT - CATCH_WT) 
+ggplot(data = plotting_alt1_strata_meansYT, 
+       aes(x = YEAR, y = difference_yt1, color = as.factor(original_STRATUM))) +
+  geom_line() +
+  geom_hline(yintercept = 0) +
+  facet_wrap(.~SEASON) +
+  labs(title = "Yellowtail flounder alt 1",
+       x = "Year",
+       y = "Difference in weights between alternative and original",
+       color = "Original Stratum") +
+  scale_color_viridis_d()
+
+plotting_alt2_strata_meansYT <- alt2_strata_meanYT %>%
+  filter(PURPOSE_CODE == 10) %>%
+  mutate(yt_CATCH_WT = CATCH_WT, yt_CATCH_NO = CATCH_NO) %>%
+  select(YEAR, SEASON, STRATUM, yt_CATCH_WT, yt_CATCH_NO) %>%
+  full_join(., joining_original_strata_meanYT, by = c("YEAR", "SEASON")) %>%
+  mutate(difference_yt2 = yt_CATCH_WT - CATCH_WT) 
+ggplot(data = plotting_alt2_strata_meansYT, 
+       aes(x = YEAR, y = difference_yt2, color = as.factor(original_STRATUM))) +
+  geom_line() +
+  geom_hline(yintercept = 0) +
+  facet_wrap(.~SEASON) +
+  labs(title = "Yellowtail flounder alt 2",
+       x = "Year",
+       y = "Difference in weights between alternative and original",
+       color = "Original Stratum") +
+  scale_color_viridis_d()
+```
+
+### HMT 2 - box plot of differences (difference between each resample and the control at different level of tows, needs to be able to show the diffrerence between alt 1 and alt 2, can have two seperate plots for species if needed), not done
+```{r}
+final_strata_meanAB %>% mutate(STRATUM = as.character(STRATUM), number_tows = as.character(number_tows),YEAR = as.character(YEAR)) %>% 
+        mutate(superstrata = case_when(STRATUM =="646566" ~ "Stratum A", 
+                                       STRATUM == "596061" ~ "Stratum B")) %>%
+        filter(superstrata == "Stratum A") %>%
+        filter(number_tows == "3") %>%
+        mutate(wf_CATCH_WT = CATCH_WT) %>%
+    left_join()
+      
+
+
+  ggplot() +
+        geom_boxplot(aes(x=YEAR, y = CATCH_WT, fill = number_tows)) +
+        geom_line(data = filter(alt1_strata_mean_labeled, superstrata == "Stratum A"), aes(x = as.character(YEAR), y = CATCH_WT, linetype = "Altered stratum A", group = SEASON), colour = "black", size = 1) +
+        #  geom_line(data = select(filter(original_strata_mean, STRATUM == 3590), -number_tows, -STRATUM), aes(x = as.character(YEAR), y = CATCH_WT, linetype = "Original 59", group = SEASON), colour = "black", size = 1) + # This adds the original series for strata 59
+        #  geom_line(data = select(filter(original_strata_mean, STRATUM == 3600), -number_tows, -STRATUM), aes(x = as.character(YEAR), y = CATCH_WT, linetype = "Original 60", group = SEASON), colour = "black", size = 1) + # This adds the original series for strata 60
+        #  geom_line(data = select(filter(original_strata_mean, STRATUM == 3610), -number_tows, -STRATUM), aes(x = as.character(YEAR), y = CATCH_WT, linetype = "Original 61", group = SEASON), colour = "black", size = 1) + # This adds the original series for strata 61
+        facet_wrap(.~SEASON) +
+        ylab("Mean weight (kg/tow)") +
+        scale_fill_manual(values = c("#FF1493", "#FFC2E2", "#B192D7", "#008FCC")) +
+        labs(linetype = "Survey strata") +
+        theme_grey(base_size = 15)
+```
+
+### HMT 3 difference plot that shows the difference bettwen the alternatives and original design for both alt1 and 2 and both species, done
+```{r}
+joining_original_indicesWF <- original_indices %>%
+  filter(PURPOSE_CODE == 10) %>%
+  select(YEAR, SEASON, STRAT_MEAN_WT, STRAT_MEAN_NO)
+joining_original_indicesYT <- YToriginal_indices %>%
+  filter(PURPOSE_CODE == 10) %>%
+  select(YEAR, SEASON, STRAT_MEAN_WT, STRAT_MEAN_NO)
+
+plotting_alt1_indices <- alt1_indices %>%
+  filter(PURPOSE_CODE == 10) %>%
+  mutate(wf_STRAT_MEAN_WT = STRAT_MEAN_WT, wf_STRAT_MEAN_NO = STRAT_MEAN_NO) %>%
+  select(YEAR, SEASON, wf_STRAT_MEAN_WT, wf_STRAT_MEAN_NO) %>%
+  left_join(., joining_original_indicesWF) %>%
+  mutate(difference_wf1 = wf_STRAT_MEAN_WT - STRAT_MEAN_WT,
          Difference = case_when(difference_wf1 > 0 ~ "alt1 > original",
                                 difference_wf1 < 0 ~ "alt1 < original",
                                 difference_wf1 == 0 ~ "Equal")) 
@@ -1106,6 +1210,11 @@ ggplot() +
            y = "Difference in index weights between alternative and original", 
            color = "Legend") +
       scale_color_manual(values = colors)
+```
+
+### HMT 4 - difference between every single resample and the control at different levels of sampling, not done, box plot
+```{r}
+
 ```
 
 ### Differences between index controls across wf and ytf - alt1 - weights
@@ -1192,66 +1301,4 @@ alt1_indicesYT %>%
   scale_color_manual(values = c("#ffe227", "#0e970e", "#5f5f5f"))
 ```
 
-### HMT 2
-```{r}
-
-```
-
-### HMT 3 difference plot that shows the difference bettwen the alternatives and original design for both alt1 and 2 and both species
-```{r}
-joining_original_indicesWF <- original_indices %>%
-  filter(PURPOSE_CODE == 10) %>%
-  select(YEAR, SEASON, STRAT_MEAN_WT, STRAT_MEAN_NO)
-joining_original_indicesYT <- YToriginal_indices %>%
-  filter(PURPOSE_CODE == 10) %>%
-  select(YEAR, SEASON, STRAT_MEAN_WT, STRAT_MEAN_NO)
-
-plotting_alt1_indices <- alt1_indices %>%
-  filter(PURPOSE_CODE == 10) %>%
-  mutate(wf_STRAT_MEAN_WT = STRAT_MEAN_WT, wf_STRAT_MEAN_NO = STRAT_MEAN_NO) %>%
-  select(YEAR, SEASON, wf_STRAT_MEAN_WT, wf_STRAT_MEAN_NO) %>%
-  left_join(., joining_original_indicesWF) %>%
-  mutate(difference_wf1 = wf_STRAT_MEAN_WT - STRAT_MEAN_WT,
-         Difference = case_when(difference_wf1 > 0 ~ "alt1 > original",
-                                difference_wf1 < 0 ~ "alt1 < original",
-                                difference_wf1 == 0 ~ "Equal")) 
-plotting_alt2_indices <- alt2_indices %>%
-  filter(PURPOSE_CODE == 10) %>%
-  mutate(wf_STRAT_MEAN_WT = STRAT_MEAN_WT, wf_STRAT_MEAN_NO = STRAT_MEAN_NO) %>%
-  select(YEAR, SEASON, wf_STRAT_MEAN_WT, wf_STRAT_MEAN_NO) %>%
-  left_join(., joining_original_indicesWF) %>%
-  mutate(difference_wf2 = wf_STRAT_MEAN_WT - STRAT_MEAN_WT,
-         Difference = case_when(difference_wf2 > 0 ~ "alt1 > original",
-                                difference_wf2 < 0 ~ "alt1 < original",
-                                difference_wf2 == 0 ~ "Equal"))
-plotting_alt1_indicesYT <- alt1_indicesYT %>%
-  filter(PURPOSE_CODE == 10) %>%
-  mutate(yt_STRAT_MEAN_WT = STRAT_MEAN_WT, yt_STRAT_MEAN_NO = STRAT_MEAN_NO) %>%
-  select(YEAR, SEASON, yt_STRAT_MEAN_WT, yt_STRAT_MEAN_NO) %>%
-  left_join(., joining_original_indicesYT) %>%
-  mutate(difference_yt1 = yt_STRAT_MEAN_WT - STRAT_MEAN_WT,
-         Difference = case_when(difference_yt1 > 0 ~ "alt1 > original",
-                                difference_yt1 < 0 ~ "alt1 < original",
-                                difference_yt1 == 0 ~ "Equal")) 
-plotting_alt2_indicesYT <- alt2_indicesYT %>%
-  filter(PURPOSE_CODE == 10) %>%
-  mutate(yt_STRAT_MEAN_WT = STRAT_MEAN_WT, yt_STRAT_MEAN_NO = STRAT_MEAN_NO) %>%
-  select(YEAR, SEASON, yt_STRAT_MEAN_WT, yt_STRAT_MEAN_NO) %>%
-  left_join(., joining_original_indicesYT) %>%
-  mutate(difference_yt2 = yt_STRAT_MEAN_WT - STRAT_MEAN_WT,
-         Difference = case_when(difference_yt2 > 0 ~ "alt1 > original",
-                                difference_yt2 < 0 ~ "alt1 < original",
-                                difference_yt2 == 0 ~ "Equal")) 
-ggplot() +
-      geom_line(data = plotting_alt1_indices, aes(x=YEAR, y = difference_wf1), color = "blue") +
-      geom_line(data = plotting_alt2_indices, aes(x=YEAR, y = difference_wf2), color = "red") +
-      geom_line(data = plotting_alt1_indicesYT, aes(x=YEAR, y = difference_yt1), color = "yellow3") +
-      geom_line(data = plotting_alt2_indicesYT, aes(x=YEAR, y = difference_yt2), color = "purple") +
-      geom_hline(yintercept = 0) +
-      facet_wrap(.~SEASON) +
-      labs(x = "Year",
-           y = "Difference in index weights between alternative and original", 
-           color = "Legend") +
-      scale_color_manual(values = colors)
-```
 # More misc. plots included at the bottom of the plot_results.R script. Maybe go through some of them for bonus slides for the final popdy presentation
