@@ -1301,4 +1301,69 @@ alt1_indicesYT %>%
   scale_color_manual(values = c("#ffe227", "#0e970e", "#5f5f5f"))
 ```
 
+<<<<<<< HEAD
+=======
+### HMT 2
+```{r}
+
+```
+
+### HMT 3 difference plot that shows the difference bettwen the alternatives and original design for both alt1 and 2 and both species
+```{r}
+joining_original_indicesWF <- original_indices %>%
+  filter(PURPOSE_CODE == 10) %>%
+  select(YEAR, SEASON, STRAT_MEAN_WT, STRAT_MEAN_NO)
+joining_original_indicesYT <- YToriginal_indices %>%
+  filter(PURPOSE_CODE == 10) %>%
+  select(YEAR, SEASON, STRAT_MEAN_WT, STRAT_MEAN_NO)
+
+plotting_alt1_indices <- alt1_indices %>%
+  filter(PURPOSE_CODE == 10) %>%
+  mutate(wf_STRAT_MEAN_WT = STRAT_MEAN_WT, wf_STRAT_MEAN_NO = STRAT_MEAN_NO) %>%
+  select(YEAR, SEASON, wf_STRAT_MEAN_WT, wf_STRAT_MEAN_NO) %>%
+  left_join(., joining_original_indicesWF) %>%
+  mutate(difference_wf1 = wf_STRAT_MEAN_WT - STRAT_MEAN_WT,
+         Difference = case_when(difference_wf1 > 0 ~ "alt1 > original",
+                                difference_wf1 < 0 ~ "alt1 < original",
+                                difference_wf1 == 0 ~ "Equal")) 
+plotting_alt2_indices <- alt2_indices %>%
+  filter(PURPOSE_CODE == 10) %>%
+  mutate(wf_STRAT_MEAN_WT = STRAT_MEAN_WT, wf_STRAT_MEAN_NO = STRAT_MEAN_NO) %>%
+  select(YEAR, SEASON, wf_STRAT_MEAN_WT, wf_STRAT_MEAN_NO) %>%
+  left_join(., joining_original_indicesWF) %>%
+  mutate(difference_wf2 = wf_STRAT_MEAN_WT - STRAT_MEAN_WT,
+         Difference = case_when(difference_wf2 > 0 ~ "alt1 > original",
+                                difference_wf2 < 0 ~ "alt1 < original",
+                                difference_wf2 == 0 ~ "Equal"))
+plotting_alt1_indicesYT <- alt1_indicesYT %>%
+  filter(PURPOSE_CODE == 10) %>%
+  mutate(yt_STRAT_MEAN_WT = STRAT_MEAN_WT, yt_STRAT_MEAN_NO = STRAT_MEAN_NO) %>%
+  select(YEAR, SEASON, yt_STRAT_MEAN_WT, yt_STRAT_MEAN_NO) %>%
+  left_join(., joining_original_indicesYT) %>%
+  mutate(difference_yt1 = yt_STRAT_MEAN_WT - STRAT_MEAN_WT,
+         Difference = case_when(difference_yt1 > 0 ~ "alt1 > original",
+                                difference_yt1 < 0 ~ "alt1 < original",
+                                difference_yt1 == 0 ~ "Equal")) 
+plotting_alt2_indicesYT <- alt2_indicesYT %>%
+  filter(PURPOSE_CODE == 10) %>%
+  mutate(yt_STRAT_MEAN_WT = STRAT_MEAN_WT, yt_STRAT_MEAN_NO = STRAT_MEAN_NO) %>%
+  select(YEAR, SEASON, yt_STRAT_MEAN_WT, yt_STRAT_MEAN_NO) %>%
+  left_join(., joining_original_indicesYT) %>%
+  mutate(difference_yt2 = yt_STRAT_MEAN_WT - STRAT_MEAN_WT,
+         Difference = case_when(difference_yt2 > 0 ~ "alt1 > original",
+                                difference_yt2 < 0 ~ "alt1 < original",
+                                difference_yt2 == 0 ~ "Equal")) 
+ggplot() +
+      geom_line(data = plotting_alt1_indices, aes(x=YEAR, y = difference_wf1, color = "Winter alt 1")) +
+      geom_line(data = plotting_alt2_indices, aes(x=YEAR, y = difference_wf2, color = "Winter alt 2")) +
+      geom_line(data = plotting_alt1_indicesYT, aes(x=YEAR, y = difference_yt1, color = "Yellowtail alt 1")) +
+      geom_line(data = plotting_alt2_indicesYT, aes(x=YEAR, y = difference_yt2, color = "Yellowtail alt 2")) +
+      geom_hline(yintercept = 0) +
+      facet_wrap(.~SEASON) +
+      labs(x = "Year",
+           y = "Difference in index weights between alternative and original", 
+           color = "Species alternative") +
+      scale_color_manual(values = c("Winter alt 1" = "red", "Winter alt 2" = "blue", "Yellowtail alt 1" = "yellow3", "Yellowtail alt 2" = "purple"))
+```
+>>>>>>> bf4adb95a355c094a7f2d5d12c52223b8dc78c7b
 # More misc. plots included at the bottom of the plot_results.R script. Maybe go through some of them for bonus slides for the final popdy presentation
