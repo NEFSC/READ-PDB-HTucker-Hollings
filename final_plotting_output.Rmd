@@ -1049,42 +1049,65 @@ YTfinal_resample_resultsCDE %>% filter(PURPOSE_CODE == 10) %>%
 # Analysis plots
 ## HMT 1 analysis (difference between original 6 strata and strata specific means control), hannah needs to add legend based on what amanda wrote yesterday
 ```{r}
-joining_original_strata_meanWF <- original_strata_mean %>%
-  filter(PURPOSE_CODE == 10) %>%
-  select(YEAR, SEASON, CATCH_WT, CATCH_NO, STRATUM) %>%
-  filter(STRATUM == 3590 | STRATUM == 3600 | STRATUM == 3610 | STRATUM == 3640 | STRATUM == 3650 | STRATUM == 3660) %>%
-  mutate(original_STRATUM = STRATUM)
-joining_original_strata_meanYT <- YToriginal_strata_mean %>%
-  filter(PURPOSE_CODE == 10) %>%
-  select(YEAR, SEASON, CATCH_WT, CATCH_NO, STRATUM) %>%
-  filter(STRATUM == 3590 | STRATUM == 3600 | STRATUM == 3610 | STRATUM == 3640 | STRATUM == 3650 | STRATUM == 3660) %>%
-  mutate(original_STRATUM = STRATUM)
+joining_original_strata_meanWF <- rbind(expand.grid(STRATUM = c(3640, 3650, 3660), superstrata = "646566_596061", superstrata_name = "Stratum A", Strata_alternative = 1),
+  expand.grid(STRATUM = c(3590, 3600, 3610), superstrata = "646566_596061", superstrata_name = "Stratum B", Strata_alternative = 1),
+  expand.grid(STRATUM = c(3640,3590), superstrata = "6459_6560_6661", superstrata_name = "Stratum C", Strata_alternative = 2),
+  expand.grid(STRATUM = c(3650,3600), superstrata = "6459_6560_6661", superstrata_name = "Stratum D", Strata_alternative = 2),
+  expand.grid(STRATUM = c(3660,3610), superstrata = "6459_6560_6661", superstrata_name = "Stratum E", Strata_alternative = 2)) %>%
+  full_join(., original_strata_mean, by = "STRATUM", relationship = "many-to-many") %>%
+  mutate(original_STRATUM = STRATUM, superstrata = superstrata.x) %>% DataExplorer::drop_columns(c("STRATUM", "superstrata.y", "superstrata.x", "number_tows")) %>% filter(PURPOSE_CODE == 10)
+
+joining_original_strata_meanYT <- rbind(expand.grid(STRATUM = c(3640, 3650, 3660), superstrata = "646566_596061", superstrata_name = "Stratum A", Strata_alternative = 1),
+  expand.grid(STRATUM = c(3590, 3600, 3610), superstrata = "646566_596061", superstrata_name = "Stratum B", Strata_alternative = 1),
+  expand.grid(STRATUM = c(3640,3590), superstrata = "6459_6560_6661", superstrata_name = "Stratum C", Strata_alternative = 2),
+  expand.grid(STRATUM = c(3650,3600), superstrata = "6459_6560_6661", superstrata_name = "Stratum D", Strata_alternative = 2),
+  expand.grid(STRATUM = c(3660,3610), superstrata = "6459_6560_6661", superstrata_name = "Stratum E", Strata_alternative = 2)) %>%
+  full_join(., YToriginal_strata_mean, by = "STRATUM", relationship = "many-to-many") %>%
+  mutate(original_STRATUM = STRATUM, superstrata = superstrata.x) %>% DataExplorer::drop_columns(c("STRATUM", "superstrata.y", "superstrata.x", "number_tows")) %>% filter(PURPOSE_CODE == 10) 
+  
 
 plotting_alt1_strata_means <- alt1_strata_mean %>%
   filter(PURPOSE_CODE == 10) %>%
   mutate(wf_CATCH_WT = CATCH_WT, wf_CATCH_NO = CATCH_NO) %>%
   select(YEAR, SEASON, STRATUM, wf_CATCH_WT, wf_CATCH_NO) %>%
-  full_join(., joining_original_strata_meanWF, by = c("YEAR", "SEASON")) %>%
+    mutate(Strata_alternative = case_when(STRATUM %in% c(646566, 596061) ~ 1,
+                                        STRATUM %in% c(6459, 6560, 6661) ~ 2),
+         superstrata_name = case_when(STRATUM == 646566 ~ "Stratum A",
+                                      STRATUM == 596061 ~ "Stratum B",
+                                      STRATUM == 6459 ~ "Stratum C",
+                                      STRATUM == 6560 ~ "Stratum D",
+                                      STRATUM == 6661 ~ "Stratum E")) %>% 
+  left_join(., joining_original_strata_meanWF, by = c("YEAR", "SEASON", "superstrata_name", "Strata_alternative"), relationship = "many-to-many") %>%
   mutate(difference_wf1 = wf_CATCH_WT - CATCH_WT) 
+
 ggplot(data = plotting_alt1_strata_means, 
        aes(x = YEAR, y = difference_wf1, color = as.factor(original_STRATUM))) +
   geom_line() +
   geom_hline(yintercept = 0) +
-  facet_wrap(.~SEASON) +
+  facet_wrap(.~SEASON + superstrata_name + Strata_alternative) + # Could use line type instead of a facet level (see below)
   labs(title = "Winter flounder alt 1",
        x = "Year",
        y = "Difference in weights between alternative and original",
        color = "Original Stratum") +
   scale_color_viridis_d()
 
+
 plotting_alt2_strata_means <- alt2_strata_mean %>%
   filter(PURPOSE_CODE == 10) %>%
   mutate(wf_CATCH_WT = CATCH_WT, wf_CATCH_NO = CATCH_NO) %>%
   select(YEAR, SEASON, STRATUM, wf_CATCH_WT, wf_CATCH_NO) %>%
-  full_join(., joining_original_strata_meanWF, by = c("YEAR", "SEASON")) %>%
+  mutate(Strata_alternative = case_when(STRATUM %in% c(646566, 596061) ~ 1,
+                                        STRATUM %in% c(6459, 6560, 6661) ~ 2),
+         superstrata_name = case_when(STRATUM == 646566 ~ "Stratum A",
+                                      STRATUM == 596061 ~ "Stratum B",
+                                      STRATUM == 6459 ~ "Stratum C",
+                                      STRATUM == 6560 ~ "Stratum D",
+                                      STRATUM == 6661 ~ "Stratum E")) %>%
+  left_join(., joining_original_strata_meanWF, by = c("YEAR", "SEASON", "superstrata_name")) %>%
   mutate(difference_wf2 = wf_CATCH_WT - CATCH_WT) 
+
 ggplot(data = plotting_alt2_strata_means, 
-       aes(x = YEAR, y = difference_wf2, color = as.factor(original_STRATUM))) +
+       aes(x = YEAR, y = difference_wf2, color = as.factor(original_STRATUM), linetype = superstrata_name)) + # Use linetype to distinguish between superstrata rather than facet
   geom_line() +
   geom_hline(yintercept = 0) +
   facet_wrap(.~SEASON) +
@@ -1094,31 +1117,49 @@ ggplot(data = plotting_alt2_strata_means,
        color = "Original Stratum") +
   scale_color_viridis_d()
 
+##### Same plots but for YT
 plotting_alt1_strata_meansYT <- alt1_strata_meanYT %>%
   filter(PURPOSE_CODE == 10) %>%
   mutate(yt_CATCH_WT = CATCH_WT, yt_CATCH_NO = CATCH_NO) %>%
   select(YEAR, SEASON, STRATUM, yt_CATCH_WT, yt_CATCH_NO) %>%
-  full_join(., joining_original_strata_meanYT, by = c("YEAR", "SEASON")) %>%
+    mutate(Strata_alternative = case_when(STRATUM %in% c(646566, 596061) ~ 1,
+                                        STRATUM %in% c(6459, 6560, 6661) ~ 2),
+         superstrata_name = case_when(STRATUM == 646566 ~ "Stratum A",
+                                      STRATUM == 596061 ~ "Stratum B",
+                                      STRATUM == 6459 ~ "Stratum C",
+                                      STRATUM == 6560 ~ "Stratum D",
+                                      STRATUM == 6661 ~ "Stratum E")) %>% 
+  left_join(., joining_original_strata_meanYT, by = c("YEAR", "SEASON", "superstrata_name", "Strata_alternative"), relationship = "many-to-many") %>%
   mutate(difference_yt1 = yt_CATCH_WT - CATCH_WT) 
+
 ggplot(data = plotting_alt1_strata_meansYT, 
        aes(x = YEAR, y = difference_yt1, color = as.factor(original_STRATUM))) +
   geom_line() +
   geom_hline(yintercept = 0) +
-  facet_wrap(.~SEASON) +
+  facet_wrap(.~SEASON + superstrata_name + Strata_alternative) + # Could use line type instead of a facet level (see below)
   labs(title = "Yellowtail flounder alt 1",
        x = "Year",
        y = "Difference in weights between alternative and original",
        color = "Original Stratum") +
   scale_color_viridis_d()
 
+
 plotting_alt2_strata_meansYT <- alt2_strata_meanYT %>%
   filter(PURPOSE_CODE == 10) %>%
   mutate(yt_CATCH_WT = CATCH_WT, yt_CATCH_NO = CATCH_NO) %>%
   select(YEAR, SEASON, STRATUM, yt_CATCH_WT, yt_CATCH_NO) %>%
-  full_join(., joining_original_strata_meanYT, by = c("YEAR", "SEASON")) %>%
+  mutate(Strata_alternative = case_when(STRATUM %in% c(646566, 596061) ~ 1,
+                                        STRATUM %in% c(6459, 6560, 6661) ~ 2),
+         superstrata_name = case_when(STRATUM == 646566 ~ "Stratum A",
+                                      STRATUM == 596061 ~ "Stratum B",
+                                      STRATUM == 6459 ~ "Stratum C",
+                                      STRATUM == 6560 ~ "Stratum D",
+                                      STRATUM == 6661 ~ "Stratum E")) %>%
+  left_join(., joining_original_strata_meanYT, by = c("YEAR", "SEASON", "superstrata_name")) %>%
   mutate(difference_yt2 = yt_CATCH_WT - CATCH_WT) 
+
 ggplot(data = plotting_alt2_strata_meansYT, 
-       aes(x = YEAR, y = difference_yt2, color = as.factor(original_STRATUM))) +
+       aes(x = YEAR, y = difference_yt2, color = as.factor(original_STRATUM), linetype = superstrata_name)) + # Use linetype to distinguish between superstrata rather than facet
   geom_line() +
   geom_hline(yintercept = 0) +
   facet_wrap(.~SEASON) +
@@ -1127,6 +1168,7 @@ ggplot(data = plotting_alt2_strata_meansYT,
        y = "Difference in weights between alternative and original",
        color = "Original Stratum") +
   scale_color_viridis_d()
+
 ```
 
 ### HMT 2 - box plot of differences (difference between each resample and the control at different level of tows, needs to be able to show the diffrerence between alt 1 and alt 2, can have two seperate plots for species if needed), not done
@@ -1147,13 +1189,14 @@ original_labeled_yt <- rbind(expand.grid(STRATUM = c(3640, 3650, 3660), superstr
   expand.grid(STRATUM = c(3660,3610), superstrata = "6459_6560_6661", superstrata_name = "Stratum E")) %>%
   full_join(., YToriginal_strata_mean, by = "STRATUM", relationship = "many-to-many") %>%
   mutate(original_STRATUM = STRATUM, superstrata = superstrata.x) %>% DataExplorer::drop_columns(c("STRATUM", "superstrata.y", "superstrata.x", "number_tows"))
-original_labeled <- rbind(original_labeled_wf, original_labeled_yt)
+original_labeled <- rbind(original_labeled_wf, original_labeled_yt) %>% filter(PURPOSE_CODE == 10)
 
 result_files <- c("RESULTS/final_strata_meanAB.csv", "RESULTS/final_strata_meanCDE.csv", "RESULTS/YTfinal_strata_meanAB.csv", "RESULTS/YTfinal_strata_meanCDE.csv")
 
 store_alt_results <- NULL
 for(iresult in 1:length(result_files)){
-    final_strata_mean <- read.csv(result_files[iresult]) # Read in data
+    final_strata_mean <- read.csv(result_files[iresult]) %>% # Read in data
+      filter(PURPOSE_CODE == 10) # Ensure only bigelow data used (no state data)
     
     if(unique(final_strata_mean$COMMON_NAME == "FLOUNDER, WINTER")){
       filter_original = original_labeled %>% filter(COMMON_NAME == "FLOUNDER, WINTER")
