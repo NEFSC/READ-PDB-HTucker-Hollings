@@ -1306,4 +1306,18 @@ library(ggdist)
 
 
 
+yellowtail <- read.csv("DATA/yellowtail_flounder_survey.csv")
+ 
+winter_flounder %>% filter(STRATUM %in% c(3590, 3600, 3610, 3640, 3640, 3660)) %>%
+ggplot() +
+  geom_point(aes(x = NOTOWS)) +
+  facet_wrap(.~SEASON + STRATUM)
 
+wompwomp %>% filter(STRATUM %in% c(3590, 3600, 3610, 3640, 3640, 3660)) %>%
+  ggplot() +
+  geom_point(aes(y = NOTOWS, x = YEAR)) +
+  facet_wrap(.~SEASON)
+
+wompwomp <- yellowtail %>%
+  filter(PURPOSE_CODE == 10) %>%
+  select(YEAR, SEASON, STRATUM, NOTOWS)
