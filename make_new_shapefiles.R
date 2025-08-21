@@ -7,8 +7,9 @@ library("tidyverse")
 # Read in all survey strata shape files
 strata <- st_read(dsn = here::here("Data/strata.shp"))
 
-strata_group  <- list("646566" = c(3640, 3650, 3660),
-                           "596061" = c(3590, 3600, 3610))
+strata_group  <- list("6459" = c(3640, 3590),
+                      "6560" = c(3650, 3600),
+                      "6661" = c(3660, 3610))
 
 
 groupNames <- names(strata_group)
