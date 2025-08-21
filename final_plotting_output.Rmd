@@ -170,9 +170,9 @@ alt2_strata_mean %>% #mutate(STRATUM = as.character(STRATUM)) %>% #!!!
         filter(STRATUM == "6459") %>% # Plot specified superstrata means using all ("max") tows
         mutate(superstrata = "Stratum C") %>% # Add plain language superstrata name
         ggplot() +
-        geom_line(aes(x = YEAR, y = CATCH_WT, colour = superstrata, group = iteration_number), size = 1) + 
-        geom_line(data = select(filter(original_strata_mean, STRATUM == 3590), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "59"), colour = "#0072A3", size = 1) + # This adds the original series for strata 59
-        geom_line(data = select(filter(original_strata_mean, STRATUM == 3640), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "64"), colour = "#0072A3", size = 1) + # This adds the original series for strata 60
+        geom_point(aes(x = YEAR, y = CATCH_WT, colour = superstrata, group = iteration_number), size = 1) + 
+        geom_point(data = select(filter(original_strata_mean, STRATUM == 3590), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "59"), colour = "#0072A3", size = 1) + # This adds the original series for strata 59
+        geom_point(data = select(filter(original_strata_mean, STRATUM == 3640), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "64"), colour = "#0072A3", size = 1) + # This adds the original series for strata 60
         ylab("Mean weight per tow (kg/tow)") + 
         facet_wrap(.~SEASON) +
         scale_linetype_manual(values = c("solid", "dotted")) +
@@ -184,10 +184,10 @@ alt2_strata_mean %>% #mutate(STRATUM = as.character(STRATUM)) %>% #!!!
         filter(STRATUM == "6560") %>% # Plot specified superstrata means using all ("max") tows
         mutate(superstrata = "Stratum D") %>% # Add plain language superstrata name
         ggplot() +
-        geom_line(aes(x = YEAR, y = CATCH_WT, colour = superstrata, group = iteration_number), size = 1) +
+        geom_point(aes(x = YEAR, y = CATCH_WT, colour = superstrata, group = iteration_number), size = 1) +
         # This adds the original series for strata 64-66
-        geom_line(data = select(filter(original_strata_mean, STRATUM == 3650), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "65"), colour = "#0072A3", size = 1) + # This adds the original series for strata 64
-        geom_line(data = select(filter(original_strata_mean, STRATUM == 3600), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "60"), colour = "#0072A3", size = 1) + # This adds the original series for strata 65
+        geom_point(data = select(filter(original_strata_mean, STRATUM == 3650), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "65"), colour = "#0072A3", size = 1) + # This adds the original series for strata 64
+        geom_point(data = select(filter(original_strata_mean, STRATUM == 3600), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "60"), colour = "#0072A3", size = 1) + # This adds the original series for strata 65
         ylab("Mean weight per tow (kg/tow)") + 
         facet_wrap(.~ SEASON) +
         scale_linetype_manual(values = c("solid", "dotted")) +
@@ -199,10 +199,10 @@ alt2_strata_mean %>% #mutate(STRATUM = as.character(STRATUM)) %>% #!!!
         filter(STRATUM == "6661") %>% # Plot specified superstrata means using all ("max") tows
         mutate(superstrata = "Stratum E") %>% # Add plain language superstrata name
         ggplot() +
-        geom_line(aes(x = YEAR, y = CATCH_WT, colour = superstrata, group = iteration_number), size = 1) +
+        geom_point(aes(x = YEAR, y = CATCH_WT, colour = superstrata, group = iteration_number), size = 1) +
         # This adds the original series for strata 64-66
-        geom_line(data = select(filter(original_strata_mean, STRATUM == 3660), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "66"), colour = "#0072A3", size = 1) + # This adds the original series for strata 64
-        geom_line(data = select(filter(original_strata_mean, STRATUM == 3610), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "61"), colour = "#0072A3", size = 1) + # This adds the original series for strata 65
+        geom_point(data = select(filter(original_strata_mean, STRATUM == 3660), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "66"), colour = "#0072A3", size = 1) + # This adds the original series for strata 64
+        geom_point(data = select(filter(original_strata_mean, STRATUM == 3610), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "61"), colour = "#0072A3", size = 1) + # This adds the original series for strata 65
         ylab("Mean weight per tow (kg/tow)") + 
         facet_wrap(.~ SEASON) +
         scale_linetype_manual(values = c("solid", "dotted")) +
@@ -266,11 +266,11 @@ alt1_strata_meanYT %>% #mutate(STRATUM = as.character(STRATUM)) %>%
         filter(STRATUM == "646566") %>% # Plot specified superstrata means using all ("max") tows
         mutate(superstrata = "Stratum A") %>% # Add plain language superstrata name
         ggplot() +
-        geom_line(aes(x = YEAR, y = CATCH_WT, colour = superstrata, group = iteration_number), size = 1) +
+        geom_point(aes(x = YEAR, y = CATCH_WT, colour = superstrata, group = iteration_number), size = 1) +
         # This adds the original series for strata 64-66
-        geom_line(data = select(filter(YToriginal_strata_mean, STRATUM == 3640), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "64"), colour = "#0072A3", size = 1) + # This adds the original series for strata 64
-        geom_line(data = select(filter(YToriginal_strata_mean, STRATUM == 3650), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "65"), colour = "#0072A3", size = 1) + # This adds the original series for strata 65
-        geom_line(data = select(filter(YToriginal_strata_mean, STRATUM == 3660), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "66"), colour = "#0072A3", size = 1) + # This adds the original series for strata 66
+        geom_point(data = select(filter(YToriginal_strata_mean, STRATUM == 3640), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "64"), colour = "#0072A3", size = 1) + # This adds the original series for strata 64
+        geom_point(data = select(filter(YToriginal_strata_mean, STRATUM == 3650), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "65"), colour = "#0072A3", size = 1) + # This adds the original series for strata 65
+        geom_point(data = select(filter(YToriginal_strata_mean, STRATUM == 3660), -number_tows, -STRATUM), aes(x = YEAR, y = CATCH_WT, linetype = "66"), colour = "#0072A3", size = 1) + # This adds the original series for strata 66
         ylab("Mean weight (kg/tow)") + 
         facet_wrap(.~ SEASON) +
         scale_linetype_manual(values = c("solid", "longdash", "dotted")) +
@@ -1003,7 +1003,7 @@ YTfinal_resample_resultsAB %>% filter(PURPOSE_CODE == 10) %>%
         ylab("Index weights") +
         theme(legend.position="none")+
         facet_grid(SEASON ~ YEAR) +
-        theme_grey(base_size = 10) 
+        theme_grey(base_size = 16) 
 ```
 
 #### Numbers 
@@ -1049,7 +1049,8 @@ YTfinal_resample_resultsCDE %>% filter(PURPOSE_CODE == 10) %>%
 # Analysis plots
 ## HMT 1 analysis (difference between original 6 strata and strata specific means control), hannah needs to add legend based on what amanda wrote yesterday
 ```{r}
-joining_original_strata_meanWF <- rbind(expand.grid(STRATUM = c(3640, 3650, 3660), superstrata = "646566_596061", superstrata_name = "Stratum A", Strata_alternative = 1),
+joining_original_strata_meanWF <- rbind(
+  expand.grid(STRATUM = c(3640, 3650, 3660), superstrata = "646566_596061", superstrata_name = "Stratum A", Strata_alternative = 1),
   expand.grid(STRATUM = c(3590, 3600, 3610), superstrata = "646566_596061", superstrata_name = "Stratum B", Strata_alternative = 1),
   expand.grid(STRATUM = c(3640,3590), superstrata = "6459_6560_6661", superstrata_name = "Stratum C", Strata_alternative = 2),
   expand.grid(STRATUM = c(3650,3600), superstrata = "6459_6560_6661", superstrata_name = "Stratum D", Strata_alternative = 2),
@@ -1066,6 +1067,7 @@ joining_original_strata_meanYT <- rbind(expand.grid(STRATUM = c(3640, 3650, 3660
   mutate(original_STRATUM = STRATUM, superstrata = superstrata.x) %>% DataExplorer::drop_columns(c("STRATUM", "superstrata.y", "superstrata.x", "number_tows")) %>% filter(PURPOSE_CODE == 10) 
   
 
+
 plotting_alt1_strata_means <- alt1_strata_mean %>%
   filter(PURPOSE_CODE == 10) %>%
   mutate(wf_CATCH_WT = CATCH_WT, wf_CATCH_NO = CATCH_NO) %>%
@@ -1078,18 +1080,24 @@ plotting_alt1_strata_means <- alt1_strata_mean %>%
                                       STRATUM == 6560 ~ "Stratum D",
                                       STRATUM == 6661 ~ "Stratum E")) %>% 
   left_join(., joining_original_strata_meanWF, by = c("YEAR", "SEASON", "superstrata_name", "Strata_alternative"), relationship = "many-to-many") %>%
-  mutate(difference_wf1 = wf_CATCH_WT - CATCH_WT) 
+  mutate(difference_wf1 = wf_CATCH_WT - CATCH_WT,
+         original_STRATUM = case_when(original_STRATUM == 3590 ~ "59",
+                                      original_STRATUM == 3600 ~ "60",
+                                      original_STRATUM == 3610 ~ "61",
+                                      original_STRATUM == 3640 ~ "64",
+                                      original_STRATUM == 3650 ~ "65",
+                                      original_STRATUM == 3660 ~ "66"))
 
 ggplot(data = plotting_alt1_strata_means, 
-       aes(x = YEAR, y = difference_wf1, color = as.factor(original_STRATUM))) +
-  geom_line() +
+       aes(x = YEAR, y = difference_wf1, color = as.factor(original_STRATUM), linetype = superstrata_name)) +
+  geom_line(size = 1) +
   geom_hline(yintercept = 0) +
-  facet_wrap(.~SEASON + superstrata_name + Strata_alternative) + # Could use line type instead of a facet level (see below)
+  facet_wrap(.~SEASON) + # Could use line type instead of a facet level (see below)
   labs(title = "Winter flounder alt 1",
-       x = "Year",
+        x = "Year",
        y = "Difference in weights between alternative and original",
        color = "Original Stratum") +
-  scale_color_viridis_d()
+  theme_gray(base_size = 16)
 
 
 plotting_alt2_strata_means <- alt2_strata_mean %>%
@@ -1104,18 +1112,24 @@ plotting_alt2_strata_means <- alt2_strata_mean %>%
                                       STRATUM == 6560 ~ "Stratum D",
                                       STRATUM == 6661 ~ "Stratum E")) %>%
   left_join(., joining_original_strata_meanWF, by = c("YEAR", "SEASON", "superstrata_name")) %>%
-  mutate(difference_wf2 = wf_CATCH_WT - CATCH_WT) 
+  mutate(difference_wf2 = wf_CATCH_WT - CATCH_WT,
+         original_STRATUM = case_when(original_STRATUM == 3590 ~ "59",
+                                      original_STRATUM == 3600 ~ "60",
+                                      original_STRATUM == 3610 ~ "61",
+                                      original_STRATUM == 3640 ~ "64",
+                                      original_STRATUM == 3650 ~ "65",
+                                      original_STRATUM == 3660 ~ "66")) 
 
 ggplot(data = plotting_alt2_strata_means, 
        aes(x = YEAR, y = difference_wf2, color = as.factor(original_STRATUM), linetype = superstrata_name)) + # Use linetype to distinguish between superstrata rather than facet
-  geom_line() +
+  geom_line(size = 1) +
   geom_hline(yintercept = 0) +
   facet_wrap(.~SEASON) +
   labs(title = "Winter flounder alt 2",
        x = "Year",
        y = "Difference in weights between alternative and original",
        color = "Original Stratum") +
-  scale_color_viridis_d()
+  theme_grey(base_size = 16)
 
 ##### Same plots but for YT
 plotting_alt1_strata_meansYT <- alt1_strata_meanYT %>%
@@ -1130,18 +1144,24 @@ plotting_alt1_strata_meansYT <- alt1_strata_meanYT %>%
                                       STRATUM == 6560 ~ "Stratum D",
                                       STRATUM == 6661 ~ "Stratum E")) %>% 
   left_join(., joining_original_strata_meanYT, by = c("YEAR", "SEASON", "superstrata_name", "Strata_alternative"), relationship = "many-to-many") %>%
-  mutate(difference_yt1 = yt_CATCH_WT - CATCH_WT) 
+  mutate(difference_yt1 = yt_CATCH_WT - CATCH_WT,
+         original_STRATUM = case_when(original_STRATUM == 3590 ~ "59",
+                                      original_STRATUM == 3600 ~ "60",
+                                      original_STRATUM == 3610 ~ "61",
+                                      original_STRATUM == 3640 ~ "64",
+                                      original_STRATUM == 3650 ~ "65",
+                                      original_STRATUM == 3660 ~ "66")) 
 
 ggplot(data = plotting_alt1_strata_meansYT, 
-       aes(x = YEAR, y = difference_yt1, color = as.factor(original_STRATUM))) +
-  geom_line() +
+       aes(x = YEAR, y = difference_yt1, color = as.factor(original_STRATUM), linetype = superstrata_name)) +
+  geom_line(size = 1) +
   geom_hline(yintercept = 0) +
-  facet_wrap(.~SEASON + superstrata_name + Strata_alternative) + # Could use line type instead of a facet level (see below)
+  facet_wrap(.~SEASON) + # Could use line type instead of a facet level (see below)
   labs(title = "Yellowtail flounder alt 1",
        x = "Year",
        y = "Difference in weights between alternative and original",
        color = "Original Stratum") +
-  scale_color_viridis_d()
+  theme_grey(base_size = 16)
 
 
 plotting_alt2_strata_meansYT <- alt2_strata_meanYT %>%
@@ -1156,22 +1176,28 @@ plotting_alt2_strata_meansYT <- alt2_strata_meanYT %>%
                                       STRATUM == 6560 ~ "Stratum D",
                                       STRATUM == 6661 ~ "Stratum E")) %>%
   left_join(., joining_original_strata_meanYT, by = c("YEAR", "SEASON", "superstrata_name")) %>%
-  mutate(difference_yt2 = yt_CATCH_WT - CATCH_WT) 
+  mutate(difference_yt2 = yt_CATCH_WT - CATCH_WT,
+         original_STRATUM = case_when(original_STRATUM == 3590 ~ "59",
+                                      original_STRATUM == 3600 ~ "60",
+                                      original_STRATUM == 3610 ~ "61",
+                                      original_STRATUM == 3640 ~ "64",
+                                      original_STRATUM == 3650 ~ "65",
+                                      original_STRATUM == 3660 ~ "66")) 
 
 ggplot(data = plotting_alt2_strata_meansYT, 
        aes(x = YEAR, y = difference_yt2, color = as.factor(original_STRATUM), linetype = superstrata_name)) + # Use linetype to distinguish between superstrata rather than facet
-  geom_line() +
+  geom_line(size = 1) +
   geom_hline(yintercept = 0) +
   facet_wrap(.~SEASON) +
   labs(title = "Yellowtail flounder alt 2",
        x = "Year",
        y = "Difference in weights between alternative and original",
        color = "Original Stratum") +
-  scale_color_viridis_d()
+  theme_grey(base_size = 16)  
 
 ```
 
-### HMT 2 - box plot of differences (difference between each resample and the control at different level of tows, needs to be able to show the diffrerence between alt 1 and alt 2, can have two seperate plots for species if needed), not done
+## HMT 2 - box plot of differences (difference between each resample and the control at different level of tows, needs to be able to show the diffrerence between alt 1 and alt 2, can have two seperate plots for species if needed), not done
 ###### Data for all HMT2 analysis plots + relative difference strata weight facet superstrata
 ```{r}
 # Expand original survey to facilitate join with alternatives
@@ -1299,22 +1325,23 @@ store_alt_results %>%
 
 ###### Relative difference strata weight both species same panel
 ```{r}
-# Combine plot across species: Plot sampling reduction of 30% vs. max reduction - warm colors = YT, cool colors = winter flounder, darkest shades = 30% reduction, lightest shade = max reduction
-store_alt_results %>% 
-  filter(Strata_alternative == 2 | Strata_alternative == 1 & alt_number_tows %in% c(3,6)) %>% 
-  mutate(Species_sampling = case_when(COMMON_NAME == "FLOUNDER, WINTER" ~ paste0("Winter flounder ", alt_number_tows, " tows"),
-                                      COMMON_NAME == "FLOUNDER, YELLOWTAIL" ~ paste0("Yellowtail flounder ", alt_number_tows, " tows"))) %>% 
-  ggplot() +
-        geom_boxplot(aes(x=YEAR, y = diff_alt_control_WT, fill = Species_sampling)) +
-  geom_hline(yintercept = 0) +
-        #geom_line(data = filter(alt1_strata_mean_labeled, superstrata == "Stratum A"), aes(x = as.character(YEAR), y = CATCH_WT, linetype = "Altered stratum A", group = SEASON), colour = "black", size = 1) +
-        facet_wrap(.~SEASON) +
-        ggtitle("Relative difference in strata weight (alternative - original)") +
-  ylab("Relative difference in strata weight") +
-        scale_fill_manual(values = c("#94DFFF", "#008FCC", "#004766",  "#FFC2E2", "#FF1493", "#8F004C")) +
-        labs(linetype = "Survey strata") +
-        theme_grey(base_size = 15) +
-  facet_wrap(.~ superstrata_name + SEASON, ncol = 2)
+# # Combine plot across species: Plot sampling reduction of 30% vs. max reduction - warm colors = YT, cool colors = winter flounder, darkest shades = 30% reduction, lightest shade = max reduction
+# store_alt_results %>% 
+#   filter(Strata_alternative == 2 | Strata_alternative == 1 & alt_number_tows %in% c(3,6)) %>% 
+#   mutate(Species_sampling = case_when(COMMON_NAME == "FLOUNDER, WINTER" ~ paste0("Winter flounder ", alt_number_tows, " tows"),
+#                                       COMMON_NAME == "FLOUNDER, YELLOWTAIL" ~ paste0("Yellowtail flounder ", alt_number_tows, " tows"))) %>% 
+#   filter()
+#   ggplot() +
+#         geom_boxplot(aes(x=YEAR, y = diff_alt_control_WT, fill = Species_sampling)) +
+#   geom_hline(yintercept = 0) +
+#         #geom_line(data = filter(alt1_strata_mean_labeled, superstrata == "Stratum A"), aes(x = as.character(YEAR), y = CATCH_WT, linetype = "Altered stratum A", group = SEASON), colour = "black", size = 1) +
+#         facet_wrap(.~SEASON) +
+#         ggtitle("Relative difference in strata weight (alternative - original)") +
+#   ylab("Relative difference in strata weight") +
+#         scale_fill_manual(values = c("#94DFFF", "#008FCC", "#004766",  "#FFC2E2", "#FF1493", "#8F004C")) +
+#         labs(linetype = "Survey strata") +
+#         theme_grey(base_size = 15) +
+#   facet_wrap(.~ superstrata_name + SEASON, ncol = 2)
 ```
 
 ###### Percent change between alternative and original sampling strata weight
@@ -1392,7 +1419,7 @@ store_alt_results_percent %>%
 
 ```
 
-### HMT 3 difference plot that shows the difference bettwen the alternatives and original design for both alt1 and 2 and both species, done
+## HMT 3 difference plot that shows the difference bettwen the alternatives and original design for both alt1 and 2 and both species, done
 ```{r}
 joining_original_indicesWF <- original_indices %>%
   filter(PURPOSE_CODE == 10) %>%
@@ -1438,10 +1465,10 @@ plotting_alt2_indicesYT <- alt2_indicesYT %>%
                                 difference_yt2 < 0 ~ "alt1 < original",
                                 difference_yt2 == 0 ~ "Equal")) 
 ggplot() +
-      geom_line(data = plotting_alt1_indices, aes(x=YEAR, y = difference_wf1), color = "blue") +
-      geom_line(data = plotting_alt2_indices, aes(x=YEAR, y = difference_wf2), color = "red") +
-      geom_line(data = plotting_alt1_indicesYT, aes(x=YEAR, y = difference_yt1), color = "yellow3") +
-      geom_line(data = plotting_alt2_indicesYT, aes(x=YEAR, y = difference_yt2), color = "purple") +
+      geom_line(data = plotting_alt1_indices, aes(x=YEAR, y = difference_wf1), color = "#004766", size = 1) +
+      geom_line(data = plotting_alt2_indices, aes(x=YEAR, y = difference_wf2), color = "#008FCC", size = 1) +
+      geom_line(data = plotting_alt1_indicesYT, aes(x=YEAR, y = difference_yt1), color = "#FF1493", size = 1) +
+      geom_line(data = plotting_alt2_indicesYT, aes(x=YEAR, y = difference_yt2), color = "#8F004C") +
       geom_hline(yintercept = 0) +
       facet_wrap(.~SEASON) +
       labs(x = "Year",
@@ -1450,25 +1477,26 @@ ggplot() +
       scale_color_manual(values = colors)
 ```
 
-### HMT 4 - difference between every single resample and the control at different levels of sampling, not done, box plot
+## HMT 4 - difference between every single resample and the control at different levels of sampling, not done, box plot
 ```{r}
-final_resample_resultsAB %>%
-        filter(number_tows == "3") %>%
-        mutate(wf_STRAT_MEAN_WT = STRAT_MEAN_WT) %>%
-    left_join(., original_indices)
-      
-difference_WT = wf_STRAT_MEAN_WT - STRAT_MEAN_WT
-
-  ggplot() +
-        geom_boxplot(aes(x=YEAR, y = difference_WT, fill = number_tows)) +
-        geom_hline(yintercept = 0) +
-        facet_wrap(.~SEASON) +
-        ylab("Mean weight (kg/tow)") +
-        scale_fill_manual(values = c("#FF1493", "#FFC2E2", "#B192D7", "#008FCC")) +
-        labs(linetype = "Survey strata") +
-        theme_grey(base_size = 15)
+# final_resample_resultsAB %>%
+#         filter(number_tows == "3") %>%
+#         mutate(wf_STRAT_MEAN_WT = STRAT_MEAN_WT) %>%
+#     left_join(., original_indices)
+#       
+# difference_WT = wf_STRAT_MEAN_WT - STRAT_MEAN_WT
+# 
+#   ggplot() +
+#         geom_boxplot(aes(x=YEAR, y = difference_WT, fill = number_tows)) +
+#         geom_hline(yintercept = 0) +
+#         facet_wrap(.~SEASON) +
+#         ylab("Mean weight (kg/tow)") +
+#         scale_fill_manual(values = c("#FF1493", "#FFC2E2", "#B192D7", "#008FCC")) +
+#         labs(linetype = "Survey strata") +
+#         theme_grey(base_size = 15)
 ```
 
+## More random plots
 ### Differences between index controls across wf and ytf - alt1 - weights
 ```{r}
 alt1_indices %>%
@@ -1481,13 +1509,14 @@ alt1_indices %>%
                                 diff_STRAT_MEAN_WT < 0 ~ "wf < ytf",
                                 diff_STRAT_MEAN_WT == 0 ~ "Equal"))%>%
   ggplot() +
-  geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_WT)) +
-  geom_point(aes(x=YEAR, y = diff_STRAT_MEAN_WT, colour = Difference), size = 2) +
+  geom_line(aes(x=YEAR, y = diff_STRAT_MEAN_WT), size = 1) +
+  geom_point(aes(x=YEAR, y = diff_STRAT_MEAN_WT, colour = Difference), size = 3) +
   geom_hline(yintercept = 0) +
   #geom_vline(xintercept = 2018, linewidth = 1) +
   facet_wrap(.~SEASON) +
   ylab("Difference in index weights") +
-  scale_color_manual(values = c("#1482f4", "#f4df14"))
+  scale_color_manual(values = c("#1482f4", "#f4df14")) +
+  theme_grey(base_size = 16)
 ```
 
 ### Differences between index controls across wf and ytf - alt1 - numbers
@@ -1553,13 +1582,6 @@ alt1_indicesYT %>%
   scale_color_manual(values = c("#ffe227", "#0e970e", "#5f5f5f"))
 ```
 
-<<<<<<< HEAD
-=======
-### HMT 2
-```{r}
-
-```
-
 ### HMT 3 difference plot that shows the difference bettwen the alternatives and original design for both alt1 and 2 and both species
 ```{r}
 joining_original_indicesWF <- original_indices %>%
@@ -1606,16 +1628,17 @@ plotting_alt2_indicesYT <- alt2_indicesYT %>%
                                 difference_yt2 < 0 ~ "alt1 < original",
                                 difference_yt2 == 0 ~ "Equal")) 
 ggplot() +
-      geom_line(data = plotting_alt1_indices, aes(x=YEAR, y = difference_wf1, color = "Winter alt 1")) +
-      geom_line(data = plotting_alt2_indices, aes(x=YEAR, y = difference_wf2, color = "Winter alt 2")) +
-      geom_line(data = plotting_alt1_indicesYT, aes(x=YEAR, y = difference_yt1, color = "Yellowtail alt 1")) +
-      geom_line(data = plotting_alt2_indicesYT, aes(x=YEAR, y = difference_yt2, color = "Yellowtail alt 2")) +
+      geom_line(data = plotting_alt1_indices, aes(x=YEAR, y = difference_wf1, color = "Winter alt 1"), size = 1) +
+      geom_line(data = plotting_alt2_indices, aes(x=YEAR, y = difference_wf2, color = "Winter alt 2"), size = 1) +
+      geom_line(data = plotting_alt1_indicesYT, aes(x=YEAR, y = difference_yt1, color = "Yellowtail alt 1"), size = 1) +
+      geom_line(data = plotting_alt2_indicesYT, aes(x=YEAR, y = difference_yt2, color = "Yellowtail alt 2"), size = 1) +
       geom_hline(yintercept = 0) +
       facet_wrap(.~SEASON) +
       labs(x = "Year",
            y = "Difference in index weights between alternative and original", 
            color = "Species alternative") +
-      scale_color_manual(values = c("Winter alt 1" = "red", "Winter alt 2" = "blue", "Yellowtail alt 1" = "yellow3", "Yellowtail alt 2" = "purple"))
+      scale_color_manual(values = c("Winter alt 1" = "#004766", "Winter alt 2" = "#008FCC", "Yellowtail alt 1" = "#FF1493", "Yellowtail alt 2" = "#946AC8")) +
+      theme_grey(base_size = 16)
 ```
 >>>>>>> bf4adb95a355c094a7f2d5d12c52223b8dc78c7b
 # More misc. plots included at the bottom of the plot_results.R script. Maybe go through some of them for bonus slides for the final popdy presentation
