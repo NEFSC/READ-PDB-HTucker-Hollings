@@ -1,13 +1,46 @@
-#Project Title : Determining the effects of altered survey design on relative abundance indices for groundfish
+Project Title : Determining the effects of altered survey design on relative abundance indices for groundfish
 
-#calc_index_nosample: Script to calculate index with specified strata groups without resampling
-#calc_original_index.R: Script to calculate index based on original design.
-#calc_survey_area.R : file where I originally made the sampling effort map. 
-#heat_map_function.R : file that contains the sampling effort map, but in function form.
-#make_new_shapefiles.R : Script to generate new shapefiles for super strata.
-#one_strata_resample.R : function for resampling weight and catch number within one strata.
-#Plot_results.R: Script to plot index and strata-specific mean results.
+heat_map_function.R : file that contains the sampling effort map, but in function form.
+make_new_shapefiles.R : Script to generate new shapefiles for super strata.
+calc_index_nosample: Script to calculate index with specified strata groups without resampling
+one_strata_resample.R : function for resampling weight and catch number within one strata. code that creates the function "strata_resample" to do this
+final_resample_process.R : The script that runs the resampling loop for both alternatives and both species (needs function in one_strata_resample.R to work)
+Plot_results.R : Script to plot index and strata-specific mean results.
+final_plotting_output.Rmd : markdown file that has all the up-to-date plots and all the different versions of them
+planB_assessment.R : the beginning of a script that would allow to implementation into stock assessment
 
+calc_original_index.R: HMT practice script to calculate index based on original design.
+calc_survey_area.R : HMT practice file where I originally made the sampling effort map. 
+significance_testing.r : HMT practice file to start significance tests
+
+Information needed from google drive to run all the plots:
+In the "DATA" folder
+- all the EEX shape files
+- 596061, 646566, 6459, 6560, 6661 shape files
+- winter_flounder_survey.csv
+- winter_flounder_indices_646566_596061.csv
+- winter_flounder_indices_6459_6560_6661.csv
+- winter_flounder_indices_design.csv
+- winter_flounder_strata_means_646566_596061.csv
+- winter_flounder_strata_means_6459_6560_6661.csv
+- winter_flounder_strata_means_design.csv
+- yellowtail_flounder_survey.csv
+- yellowtail_flounder_indices_646566_596061.csv
+- yellowtail_flounder_indices_6459_6560_6661.csv
+- yellowtail_flounder_indices_design.csv
+- yellowtail_flounder_strata_means_646566_596061.csv
+- yellowtail_flounder_strata_means_6459_6560_6661.csv
+- yellowtail_flounder_strata_means_design.csv
+
+In the "RESULTS" folder
+- final_resample_resultsAB.csv
+- final_resample_resultsCDE.csv
+- final_strata_meanAB.csv
+- final_strata_meanCDE.csv
+- YTfinal_resample_resultsAB.csv
+- YTfinal_resample_resultsCDE.csv
+- YTfinal_strata_meanAB.csv
+- YTfinal_strata_meanCDE.csv
 
 :fish:
 
